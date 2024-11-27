@@ -26,6 +26,20 @@ class MessagePanel:
                                  )
                            )
         
+    def print_main_menu_instructions(self):
+        self.console.print(Panel("""
+                                 [green]
+                                 table_builder - Enter the table builder.
+                                 database - Enter the database editor.
+                                 settings - Enter the settings.
+                                 exit - Exit the application.
+                                 [/]
+                                 """,
+                                 title="[bold red]Main Menu[/] - [bold yellow]Instructions[/]",
+                                 title_align="center",
+                                 border_style="cyan"
+                                 )
+        )
     def print_table_builder_instructions(self):
         self.console.print(Panel(""""
                                  [bold blue]Welcome to the Table Builder![/]
@@ -39,6 +53,8 @@ class MessagePanel:
                                  print_table - Prints the table to the screen.
                                  rename - Renames the table.
                                  print_table_data - Prints the JSON data for the table.
+                                 save_table - Saves the table to the curretly set database.
+                                 load_table - Loads a table from the database.
                                  exit - Go back to the main menu.
                                  help - Prints this screen.
                                  [/]
@@ -66,3 +82,35 @@ class MessagePanel:
                                  subtitle_align="center", 
                                  border_style="cyan"
                                  ))
+        
+    def print_database_instructions(self):
+        self.console.print(Panel("""
+                                 [bold yellow]Welcome to Databases![/]
+                                 
+                                 
+                                 [blue]
+                                 Here you can setup a database to save your tables you build in, making it easy to transfer.
+                                 [/]
+                                 
+                                 
+                                 [green]
+                                 create_database - Creates a new database.
+                                 delete_database - Deletes an existing database.
+                                 set_database - Set an available database as the current working database.
+                                 show_available_databases - Prints the list of currently saved databases.
+                                 help - Shows this screen.
+                                 show_available_tables - Prints a list of saved tables under the currently set database.
+                                 view_table - Prints the saved table to the screen from the currently saved database.
+                                 delete_table - Deletes the table from the currently set database.
+                                 show_set_database - Shows the curretly set database.
+                                 [/]
+                                 
+                                 
+                                 [bold red]'Exit' to go back to main menu.[/]
+                                                                 
+                                 """,
+                                 title="[bold red]Database[/] - [bold yellow]Instructions[/]",
+                                 title_align="center",
+                                 subtitle="Instructions",
+                                 subtitle_align="center",
+                                 border_style="cyan"))
