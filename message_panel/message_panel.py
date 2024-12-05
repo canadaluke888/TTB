@@ -1,5 +1,4 @@
 from rich.panel import Panel
-from rich.markdown import Markdown
 
 class MessagePanel:
     
@@ -29,7 +28,7 @@ class MessagePanel:
     def print_main_menu_instructions(self):
         self.console.print(Panel("""
                                  [green]
-                                 table_builder - Enter the table builder.
+                                 table builder - Enter the table builder.
                                  database - Enter the database editor.
                                  settings - Enter the settings.
                                  exit - Exit the application.
@@ -45,16 +44,17 @@ class MessagePanel:
                                  [bold blue]Welcome to the Table Builder![/]
                                  
                                  [green]
-                                 add_column - Add a column to the table.
-                                 add_row - Add a row to the table.
-                                 remove_column - Removes a column from the table.
-                                 remove_row - Removes a row from the table.
-                                 edit_cell - Allows you to edit the content of a cell in the table.
-                                 print_table - Prints the table to the screen.
+                                 add column - Add a column to the table.
+                                 add row - Add a row to the table.
+                                 remove column - Removes a column from the table.
+                                 remove row - Removes a row from the table.
+                                 edit cell - Allows you to edit the content of a cell in the table.
+                                 print table - Prints the table to the screen.
                                  rename - Renames the table.
-                                 print_table_data - Prints the JSON data for the table.
-                                 save_table - Saves the table to the curretly set database.
-                                 load_table - Loads a table from the database.
+                                 print table_data - Prints the JSON data for the table.
+                                 save table - Saves the table to the curretly set database.
+                                 load table - Loads a table from the database.
+                                 load_csv - Loads a CSV file into a formatted table.
                                  exit - Go back to the main menu.
                                  help - Prints this screen.
                                  [/]
@@ -94,15 +94,15 @@ class MessagePanel:
                                  
                                  
                                  [green]
-                                 create_database - Creates a new database.
-                                 delete_database - Deletes an existing database.
-                                 set_database - Set an available database as the current working database.
-                                 show_available_databases - Prints the list of currently saved databases.
+                                 create database - Creates a new database.
+                                 delete database - Deletes an existing database.
+                                 set database - Set an available database as the current working database.
+                                 show available databases - Prints the list of currently saved databases.
                                  help - Shows this screen.
-                                 show_available_tables - Prints a list of saved tables under the currently set database.
-                                 view_table - Prints the saved table to the screen from the currently saved database.
-                                 delete_table - Deletes the table from the currently set database.
-                                 show_set_database - Shows the curretly set database.
+                                 show available tables - Prints a list of saved tables under the currently set database.
+                                 view table - Prints the saved table to the screen from the currently saved database.
+                                 delete table - Deletes the table from the currently set database.
+                                 show set database - Shows the curretly set database.
                                  [/]
                                  
                                  

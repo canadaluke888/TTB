@@ -2,7 +2,8 @@ from rich.table import Table
 from message_panel.message_panel import MessagePanel
 import sqlite3
 from rich.panel import Panel
-
+import csv
+import os
 
 class TableBuilder:
     def __init__(self, console, settings, database):
@@ -48,7 +49,44 @@ class TableBuilder:
             self.message_panel.create_error_message(f"Error saving table: {e}")
         finally:
             connection.close()
+            
+    def load_csv(self):
+        """
+        Loads a CSV file and updates the table data for building a table.
 
+        Prompts the user for the CSV file path and validates the input.
+        """
+        csv_path = self.console.input("[bold yellow]Enter path to CSV file[/]: ")
+
+        # Check if the path is valid
+        if not os.path.isfile(csv_path):
+            self.message_panel.create_error_message("Invalid path or file does not exist.")
+            return
+
+        try:
+            with open(csv_path, 'r', encoding='utf-8') as csv_file:
+                reader = csv.reader(csv_file)
+                rows = list(reader)  # Convert reader to a list of rows
+                
+                if not rows:
+                    self.message_panel.create_error_message("CSV file is empty.")
+                    return
+
+                # First row as columns
+                self.table_data["columns"] = rows[0]
+                # Remaining rows as data
+                self.table_data["rows"] = [
+                    {col: value for col, value in zip(self.table_data["columns"], row)}
+                    for row in rows[1:]
+                ]
+
+                self.message_panel.create_information_message("CSV file loaded successfully.")
+                
+                # Automatically print the table if the setting is enabled
+                if self.settings.get_autoprint_table() == "on":
+                    self.print_table()
+        except Exception as e:
+            self.message_panel.create_error_message(f"Failed to load CSV file: {e}")
             
     def load_table(self):
         if self.database.current_database is None:
@@ -187,43 +225,43 @@ class TableBuilder:
         self.message_panel.print_table_builder_instructions()
 
         while True:
-            builder_command = self.console.input("[bold red]Table Builder[/] - [bold yellow]Enter a command[/]: ")
+            builder_command = self.console.input("[bold red]Table Builder[/] - [bold yellow]Enter a command[/]: ").lower().strip()
 
-            if builder_command == "print_help":
+            if builder_command == "print help":
                 self.message_panel.print_table_builder_instructions()
 
-            elif builder_command == "add_column":
+            elif builder_command == "add column":
                 self.add_column()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
-            elif builder_command == "add_row":
+            elif builder_command == "add row":
                 self.add_row()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
-            elif builder_command == "edit_cell":
+            elif builder_command == "edit cell":
                 self.edit_cell()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
-            elif builder_command == "remove_column":
+            elif builder_command == "remove column":
                 self.remove_column()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
-            elif builder_command == "remove_row":
+            elif builder_command == "remove row":
                 self.remove_row()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
-            elif builder_command == "print_table":
+            elif builder_command == "print table":
                 self.print_table()
 
-            elif builder_command == "print_table_data":
+            elif builder_command == "print table_data":
                 self.print_table_data()
 
-            elif builder_command == "clear_table":
+            elif builder_command == "clear table":
                 self.clear_table()
 
             elif builder_command == "rename":
@@ -231,10 +269,13 @@ class TableBuilder:
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
-            elif builder_command == "load_table":
+            elif builder_command == "load table":
                 self.load_table()
+                
+            elif builder_command == "load csv":
+                self.load_csv()
 
-            elif builder_command == "save_table":
+            elif builder_command == "save table":
                 self.save_table()
 
             elif builder_command == "help":

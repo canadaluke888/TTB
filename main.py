@@ -18,7 +18,7 @@ def main():
         
         main_menu_command = console.input("[bold red]Main Menu[/] - [bold yellow]Enter a command[/]: ").lower().strip()
         
-        if main_menu_command == "table_builder":
+        if main_menu_command == "table builder":
             table_builder = TableBuilder(console, settings, database)
             table_builder.launch_builder()
             

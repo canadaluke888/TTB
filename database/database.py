@@ -264,23 +264,23 @@ class Database:
         
         while True:
             database_command = self.console.input("[bold red]Database[/] - [bold yellow]Enter a command[/]: ").lower()
-            if database_command == "create_database":
+            if database_command == "create database":
                 self.create_new_database()
-            elif database_command == "delete_database":
+            elif database_command == "delete database":
                 self.delete_database()
-            elif database_command == "set_database":
+            elif database_command == "set database":
                 self.set_database()
-            elif database_command == "show_available_tables":
+            elif database_command == "show available tables":
                 self.show_available_tables()
-            elif database_command == "view_table":
+            elif database_command == "view table":
                 self.view_table()
-            elif database_command == "delete_table":
+            elif database_command == "delete table":
                 self.delete_table()
-            elif database_command == "show_set_database":
+            elif database_command == "show set database":
                 self.show_set_database()
             elif database_command == "help":
                 self.message_panel.print_database_instructions()
-            elif database_command == "show_available_databases":
+            elif database_command == "show available databases":
                 self.show_availalable_databases()
             elif database_command == "exit":
                 break
