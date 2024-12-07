@@ -29,6 +29,7 @@ A terminal-based application that allows you to easily build and edit tabular da
 - **Saving data to a CSV file:** Enter the `save csv` command. You will be prompted on if you want to use the name of the table as the name of the CSV file. The CSV file will appear in the root directory of the app.
 - **Clearning the table:** Enter the `clear table` command.
 - **Renaming the table:** Enter the `rename` command. Enter the new name for the table.
+- **Viewing the JSON data for the table:** Enter the `print table data` command.
 - **Exiting the app:** You can you use the `exit` command to exit the application and navigate through the diffrent parts of the app.
 
 ### Settings
