@@ -2,6 +2,8 @@
 
 A terminal-based application that allows you to easily build and edit tabular data.
 
+Easily view and edit tables in databases from the terminal.
+
 ![App Screenshot](screenshots/Terminal%20Table%20Builder%20SS.png)
 
 ## Prerequisites
@@ -15,6 +17,9 @@ A terminal-based application that allows you to easily build and edit tabular da
 
 ## Usage
 
+
+- **Starting the application:** For Linux and Max OS, `python3 main.py`. For Windows, `python main.py`.
+
 ## Database
 - **Creating a new database:** In the main menu, enter the `database` command. Enter the `create database` command and then name the new database. Your database will automatically be selected as the working database.
 - **Deleting a database:** Enter the `delete database` command and then select the database that you want to delete from the list.
@@ -24,7 +29,6 @@ A terminal-based application that allows you to easily build and edit tabular da
 - **Viewing the current database:** Enter the `current database` command.
 
 ### Table Builder
-- **Starting the application:** For Linux and Max OS, `python3 main.py`. For Windows, `python main.py`.
 - **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table. Remember that the first column added is going to be the heading row each row.
 - **Adding a column:** Enter the `add column` command and then enter the name for the heading.
 - **Adding a row:** Enter the `add row` command and the program will walk through each heading allowing you to enter data for each cell.
