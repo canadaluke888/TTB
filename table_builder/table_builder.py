@@ -15,6 +15,7 @@ class TableBuilder:
         self.message_panel = MessagePanel(self.console)
         self.name = self.name_table()
         self.table_data = {"columns": [], "rows": []}
+        self.table_saved = False
         
     def save_to_csv(self):
         """
@@ -45,6 +46,7 @@ class TableBuilder:
                 for row in self.table_data["rows"]:
                     writer.writerow([row.get(column, "") for column in self.table_data["columns"]])
 
+            self.table_saved = True
             self.message_panel.create_information_message(
                 f"Table data successfully saved to '{file_name}'."
             )
@@ -52,6 +54,7 @@ class TableBuilder:
             self.message_panel.create_error_message(f"Failed to save file: {e}")
 
     def name_table(self) -> str:
+        self.table_saved = False
         return self.console.input("[bold yellow]Enter a name for the new table[/]: ")
     
     def save_table(self):
@@ -81,6 +84,7 @@ class TableBuilder:
                 cursor.execute(f"INSERT INTO {escaped_table_name} VALUES ({placeholders});", values)
 
             connection.commit()
+            self.table_saved = True
             self.message_panel.create_information_message(f"Table '{self.name}' saved successfully.")
 
         except sqlite3.Error as e:
@@ -120,6 +124,7 @@ class TableBuilder:
                     for row in rows[1:]
                 ]
 
+                self.table_saved = False
                 self.message_panel.create_information_message("CSV file loaded successfully.")
                 
                 # Automatically print the table if the setting is enabled
@@ -173,6 +178,7 @@ class TableBuilder:
                     "rows": [{col: str(cell) for col, cell in zip(columns, row)} for row in rows]
                 }
 
+                self.table_saved = False
                 self.message_panel.create_information_message(f"Table '{selected_table}' loaded successfully.")
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
@@ -199,6 +205,7 @@ class TableBuilder:
             # Add empty values for the new column to existing rows
             for row in self.table_data["rows"]:
                 row[column_name] = ""
+            self.table_saved = False
             self.message_panel.create_information_message("Column added.")
         else:
             self.message_panel.create_error_message("Column already exists.")
@@ -209,6 +216,7 @@ class TableBuilder:
             cell_data = self.console.input(f"[bold yellow]Enter data for column {column}[/]: ")
             row_data[column] = cell_data
         self.table_data["rows"].append(row_data)
+        self.table_saved = False
         self.message_panel.create_information_message("Row added.")
 
     def edit_cell(self):
@@ -217,6 +225,7 @@ class TableBuilder:
         if 0 <= row_number < len(self.table_data["rows"]) and column_name in self.table_data["columns"]:
             new_data = self.console.input(f"[bold yellow]Enter new data for cell in row {row_number + 1}, column {column_name}[/]: ")
             self.table_data["rows"][row_number][column_name] = new_data
+            self.table_saved = False
             self.message_panel.create_information_message("Cell updated.")
         else:
             self.message_panel.create_error_message("Invalid row number or column name.")
@@ -227,6 +236,7 @@ class TableBuilder:
             self.table_data["columns"].remove(column_name)
             for row in self.table_data["rows"]:
                 row.pop(column_name, None)
+            self.table_saved = False
             self.message_panel.create_information_message("Column removed.")
         else:
             self.message_panel.create_error_message("Column not found.")
@@ -235,6 +245,7 @@ class TableBuilder:
         row_number = int(self.console.input("[bold yellow]Enter row number to remove (1-based index)[/]: ")) - 1
         if 0 <= row_number < len(self.table_data["rows"]):
             self.table_data["rows"].pop(row_number)
+            self.table_saved = False
             self.message_panel.create_information_message("Row removed.")
         else:
             self.message_panel.create_error_message("Invalid row number.")
@@ -325,7 +336,18 @@ class TableBuilder:
                 self.message_panel.print_table_builder_instructions()
 
             elif builder_command == "exit":
-                break
+                if not self.table_saved:
+                    exit_response = self.console.input("[bold red]Are you sure you want to exit without saving? (y/n)[/]: ").lower().strip()
+                    
+                    if exit_response == "y":
+                        break
+                    elif exit_response == "n":
+                        continue
+                    else:
+                        self.message_panel.create_error_message("Invalid input.")
+                        
+                else:
+                    break
 
             else:
                 self.message_panel.create_error_message("Invalid Command.")
