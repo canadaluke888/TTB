@@ -15,6 +15,13 @@ A terminal-based application that allows you to easily build and edit tabular da
 
 ## Usage
 
+## Database
+- **Creating a new database:** In the main menu, enter the `database` command. Enter the `create database` command and then name the new database. Your database will automatically be selected as the working database.
+- **Deleting a database:** Enter the `delete database` command and then select the database that you want to delete from the list.
+- **Selecting an existing database:** Enter the `select database` command and then choose from the list of available databases.
+- **Viewing the list of available databases:** Enter the `list databases` command.
+- **Closing an active database:** Enter the `close database` command.
+- **Viewing the current database:** Enter the `current database` command.
 
 ### Table Builder
 - **Starting the application:** For Linux and Max OS, `python3 main.py`. For Windows, `python main.py`.
@@ -27,6 +34,9 @@ A terminal-based application that allows you to easily build and edit tabular da
 - **Printing the table:** Enter the `print table` command.
 - **Loading data from a CSV file:** Enter the `load csv` command. Enter the path to the CSV file.
 - **Saving data to a CSV file:** Enter the `save csv` command. You will be prompted on if you want to use the name of the table as the name of the CSV file. The CSV file will appear in the root directory of the app.
+- **Loading a table from the database:** Enter the `load table` command and then select from the list of available tables. Make sure that you have a database selected first.
+- **Saving a table to a database:** Enter the `save table` command. The table should be saved to the currently selected database.
+- **Viewing the available tables in the database:** Enter the `list tables` command.
 - **Clearning the table:** Enter the `clear table` command.
 - **Renaming the table:** Enter the `rename` command. Enter the new name for the table.
 - **Viewing the JSON data for the table:** Enter the `print table data` command.
