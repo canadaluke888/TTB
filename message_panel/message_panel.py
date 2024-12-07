@@ -65,6 +65,7 @@ class MessagePanel:
                                  clear table - Clears the table from memory.
                                  load table - Loads a table from the database.
                                  load csv - Loads a CSV file into a formatted table.
+                                 save csv - Save the data from the table to a CSV file.
                                  exit - Go back to the main menu.
                                  help - Prints this screen.
                                  [/]

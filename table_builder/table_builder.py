@@ -15,6 +15,41 @@ class TableBuilder:
         self.message_panel = MessagePanel(self.console)
         self.name = self.name_table()
         self.table_data = {"columns": [], "rows": []}
+        
+    def save_to_csv(self):
+        """
+        Save the current table data to a CSV file.
+        """
+        use_table_name = self.console.input(
+            "[bold yellow]Use table name as save file name? (y/n)[/]: ").lower().strip()
+
+        if use_table_name == "y":
+            file_name = f"{self.name}.csv"
+        elif use_table_name == "n":
+            file_name = self.console.input(
+                "[bold yellow]Enter the name of the file (without extension)[/]: ") + ".csv"
+        else:
+            self.message_panel.create_error_message("Invalid input.")
+            return
+
+        # Write table data to the CSV file
+        try:
+            with open(file_name, 'w', newline='', encoding='utf-8') as csvfile:
+                writer = csv.writer(csvfile)
+
+                # Write header row (columns)
+                if self.table_data["columns"]:
+                    writer.writerow(self.table_data["columns"])
+
+                # Write data rows
+                for row in self.table_data["rows"]:
+                    writer.writerow([row.get(column, "") for column in self.table_data["columns"]])
+
+            self.message_panel.create_information_message(
+                f"Table data successfully saved to '{file_name}'."
+            )
+        except Exception as e:
+            self.message_panel.create_error_message(f"Failed to save file: {e}")
 
     def name_table(self) -> str:
         return self.console.input("[bold yellow]Enter a name for the new table[/]: ")
@@ -279,6 +314,9 @@ class TableBuilder:
                 
             elif builder_command == "load csv":
                 self.load_csv()
+
+            elif builder_command == "save csv":
+                self.save_to_csv()
 
             elif builder_command == "save table":
                 self.save_table()

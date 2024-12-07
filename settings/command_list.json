@@ -35,6 +35,7 @@
         "rename",
         "laod table",
         "load csv",
+        "save csv",
         "save table",
         "help",
         "exit"
