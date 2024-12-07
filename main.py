@@ -3,11 +3,13 @@ from message_panel.message_panel import MessagePanel
 from table_builder.table_builder import TableBuilder
 from settings.settings import Settings
 from autocomplete.autocomplete import Autocomplete
+from database.database import Database
 
 console = Console()
 message_panel = MessagePanel(console)
 autocomplete = Autocomplete(console)
 settings = Settings(console)
+database = Database(console)
 
 
 def main():
@@ -19,9 +21,12 @@ def main():
         main_menu_command = console.input("[bold red]Main Menu[/] - [bold yellow]Enter a command[/]: ").lower().strip()
         
         if main_menu_command == "table builder":
-            table_builder = TableBuilder(console, settings)
+            table_builder = TableBuilder(console, settings, database)
             table_builder.launch_builder()
             
+        elif main_menu_command == "database":
+            database.launch_database()
+        
         elif main_menu_command == "settings":
             settings.launch_settings()
             

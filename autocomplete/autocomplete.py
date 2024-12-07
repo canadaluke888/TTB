@@ -23,6 +23,8 @@ class Autocomplete:
         
         self.table_builder_commands = self.get_table_builder_commands()
         
+        self.database_commands = self.get_database_commands()
+        
     @cache
     def load_command_list(self):
         with open(self.command_list_file, 'r') as f:
@@ -39,6 +41,10 @@ class Autocomplete:
     @cache
     def get_table_builder_commands(self):
         return self.all_commands.get("table_builder")
+    
+    @cache
+    def get_database_commands(self):
+        return self.all_commands.get("database")
     
     def suggest_command(self, user_input, commands):
         """
