@@ -6,6 +6,14 @@ from autocomplete.autocomplete import Autocomplete
 
 class TableBuilder:
     def __init__(self, console, settings, database):
+        """
+        Initialize a new table.
+
+        Args:
+            console (Console): Pass console.
+            settings (Settings): Pass settings.
+            database (Database): Pass database.
+        """
         self.console = console
         self.database = database
         self.autocomplete = Autocomplete(self.console)
@@ -15,7 +23,7 @@ class TableBuilder:
         self.table_data = {"columns": [], "rows": []}
         self.table_saved = False
         
-    def ensure_connected_database(self):
+    def ensure_connected_database(self) -> bool:
         """
         Ensure there is a connected database before proceeding with table operations.
         """
@@ -24,7 +32,7 @@ class TableBuilder:
             return False
         return True
         
-    def save_to_database(self):
+    def save_to_database(self) -> None:
         """
         Save the current table data to the connected database.
         """
@@ -58,7 +66,7 @@ class TableBuilder:
             self.message_panel.create_error_message(f"Failed to saved to database: {e}")
 
             
-    def load_from_database(self):
+    def load_from_database(self) -> None:
         """
         Load a table from the connected database.
         """
@@ -102,7 +110,7 @@ class TableBuilder:
             self.message_panel.create_error_message(f"Failed to load table: {e}")
 
 
-    def list_tables(self):
+    def list_tables(self) -> None:
         """
         List all tables in the connected database.
         """
@@ -122,7 +130,7 @@ class TableBuilder:
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to list tables: {e}")
         
-    def save_to_csv(self):
+    def save_to_csv(self) -> None:
         """
         Save the current table data to a CSV file.
         """
@@ -163,7 +171,7 @@ class TableBuilder:
         return self.console.input("[bold yellow]Enter a name for the new table[/]: ")
 
             
-    def load_csv(self):
+    def load_csv(self) -> None:
         """
         Loads a CSV file and updates the table data for building a table.
 
@@ -202,13 +210,24 @@ class TableBuilder:
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to load CSV file: {e}")
 
-    def get_num_columns(self):
+    def get_num_columns(self) -> int:
+        """
+        Returns:
+            int: The total amount of columns in the table.
+        """
         return len(self.table_data["columns"])
 
-    def get_num_rows(self):
+    def get_num_rows(self) -> int:
+        """
+        Returns:
+            int: The total amound of rows in the table.
+        """
         return len(self.table_data["rows"])
 
-    def add_column(self):
+    def add_column(self) -> None:
+        """
+        Adds a column to the table data.
+        """
         column_name = self.console.input("[bold yellow]Enter column name[/]: ")
         if column_name not in self.table_data["columns"]:
             self.table_data["columns"].append(column_name)
@@ -220,7 +239,10 @@ class TableBuilder:
         else:
             self.message_panel.create_error_message("Column already exists.")
 
-    def add_row(self):
+    def add_row(self) -> None:
+        """
+        Adds a row to the table data.
+        """
         row_data = {}
         for column in self.table_data["columns"]:
             cell_data = self.console.input(f"[bold yellow]Enter data for column {column}[/]: ")
@@ -229,7 +251,10 @@ class TableBuilder:
         self.table_saved = False
         self.message_panel.create_information_message("Row added.")
 
-    def edit_cell(self):
+    def edit_cell(self) -> None:
+        """
+        Edits the cell content by accessing the table data based on row index and column name.
+        """
         row_number = int(self.console.input("[bold yellow]Enter row number to edit (1-based index)[/]: ")) - 1
         column_name = self.console.input("[bold yellow]Enter column name[/]: ")
         if 0 <= row_number < len(self.table_data["rows"]) and column_name in self.table_data["columns"]:
@@ -240,7 +265,10 @@ class TableBuilder:
         else:
             self.message_panel.create_error_message("Invalid row number or column name.")
 
-    def remove_column(self):
+    def remove_column(self) -> None:
+        """
+        Removes a column based on the column name given.
+        """
         column_name = self.console.input("[bold yellow]Enter column name to remove[/]: ")
         if column_name in self.table_data["columns"]:
             self.table_data["columns"].remove(column_name)
@@ -251,7 +279,10 @@ class TableBuilder:
         else:
             self.message_panel.create_error_message("Column not found.")
 
-    def remove_row(self):
+    def remove_row(self) -> None:
+        """
+        Removes a row from the table based on the row index given.
+        """
         row_number = int(self.console.input("[bold yellow]Enter row number to remove (1-based index)[/]: ")) - 1
         if 0 <= row_number < len(self.table_data["rows"]):
             self.table_data["rows"].pop(row_number)
@@ -260,7 +291,7 @@ class TableBuilder:
         else:
             self.message_panel.create_error_message("Invalid row number.")
             
-    def delete_table(self):
+    def delete_table(self) -> None:
         """
         Delete a table from the connected database by selecting it from a list of available tables.
         """
@@ -305,6 +336,12 @@ class TableBuilder:
 
 
     def build_table(self) -> Table:
+        """
+        Takes the current table data and builds the table with it.
+
+        Returns:
+            Table: The rendered table with all of the data.
+        """
         table = Table(title=self.name, border_style="yellow", show_lines=True)
         # Add columns
         for column in self.table_data["columns"]:
@@ -315,18 +352,30 @@ class TableBuilder:
             table.add_row(*row_values, style="magenta")
         return table
 
-    def print_table(self):
+    def print_table(self) -> None:
+        """
+        Prints the built table to the screen.
+        """
         table = self.build_table()
         self.console.print(table)
 
-    def print_table_data(self):
+    def print_table_data(self) -> None:
+        """
+        Prints the table data to the screen.
+        """
         self.console.print(self.table_data)
 
-    def clear_table(self):
+    def clear_table(self) -> None:
+        """
+        Clears the table data.
+        """
         self.table_data = {"columns": [], "rows": []}
         self.message_panel.create_information_message("Table cleared.")
 
-    def launch_builder(self):
+    def launch_builder(self) -> None:
+        """
+        Launches the table builder loop.
+        """
         self.message_panel.print_table_builder_instructions()
 
         while True:

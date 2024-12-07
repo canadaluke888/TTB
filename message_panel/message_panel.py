@@ -3,9 +3,24 @@ from functools import cache
 
 class MessagePanel:
     def __init__(self, console):
+        """
+        Initialize main console.
+
+        Args:
+            console (Console): rich console.
+        """
         self.console = console
 
-    def create_information_message(self, message: str):
+    def create_information_message(self, message: str) -> Panel:
+        """
+        Create a custom informational message from the system.
+
+        Args:
+            message (str): The message to display.
+
+        Returns:
+            Panel: The redered panel with the message.
+        """
         self.console.print(
             Panel(
                 f"[bold yellow]{message}[/]",
@@ -15,7 +30,16 @@ class MessagePanel:
             )
         )
 
-    def create_error_message(self, message: str):
+    def create_error_message(self, message: str) -> Panel:
+        """
+        Create a custom error message from the system.
+
+        Args:
+            message (str): The message and, optionally, error you want to display.
+
+        Returns:
+            Panel: The rendered panel with the message.
+        """
         self.console.print(
             Panel(
                 f"[bold red]{message}[/]",
@@ -26,7 +50,13 @@ class MessagePanel:
         )
 
     @cache
-    def print_welcome_message(self):
+    def print_welcome_message(self) -> Panel:
+        """
+        Print the welcome message upon login.
+        
+        Return: The rendered panel with the welcome message.
+        """
+        
         self.console.print(
             Panel(
                 """
@@ -44,7 +74,12 @@ class MessagePanel:
         )
 
     @cache
-    def print_main_menu_instructions(self):
+    def print_main_menu_instructions(self) -> Panel:
+        """
+        Print the commands for the main menu.
+        
+        Return: The rendered panel with the instructions message.
+        """
         self.console.print(
             Panel(
                 """
@@ -61,7 +96,12 @@ class MessagePanel:
         )
 
     @cache
-    def print_table_builder_instructions(self):
+    def print_table_builder_instructions(self) -> Panel:
+        """
+        Print the commands for the table builder portion of the app.
+        
+        Return: The rendered panel with the instructions message.
+        """
         self.console.print(
             Panel(
                 """
@@ -94,7 +134,12 @@ class MessagePanel:
         )
 
     @cache
-    def print_settings_instructions(self):
+    def print_settings_instructions(self) -> Panel:
+        """
+        Print the commands for the settings.
+        
+        Return: The rendered panel with the instructions message.
+        """
         self.console.print(
             Panel(
                 """
@@ -114,7 +159,12 @@ class MessagePanel:
         )
 
     @cache
-    def print_database_instructions(self):
+    def print_database_instructions(self) -> Panel:
+        """
+        Print the commands for the database portion of the app.
+        
+        Return: The rendered panel with the instructions message.
+        """
         self.console.print(
             Panel(
                 """
