@@ -1,11 +1,13 @@
 from message_panel.message_panel import MessagePanel
 from rich.table import Table
 import json
+from autocomplete.autocomplete import Autocomplete
 
 class Settings:
     
     def __init__(self, console):
         self.console = console
+        self.autocomplete = Autocomplete(self.console)
         self.settings_file = "settings/settings.json"
         self.message_panel = MessagePanel(self.console)
         self.settings = self.load_settings()
@@ -21,7 +23,7 @@ class Settings:
                 self.set_autoprint_table(value)
                 self.save_settings()
                 
-            elif setting == "print_settings":
+            elif setting == "print settings":
                 self.print_settings()
                 
             elif setting == "exit":
@@ -29,6 +31,7 @@ class Settings:
                 
             else:
                 self.message_panel.create_error_message("Invalid Input.")
+                self.autocomplete.suggest_command(setting, self.autocomplete.settings_commands)
                 
     def load_settings(self):
         try:

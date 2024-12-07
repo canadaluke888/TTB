@@ -1,4 +1,5 @@
 from rich.panel import Panel
+from functools import cache
 
 class MessagePanel:
     
@@ -7,24 +8,30 @@ class MessagePanel:
         
         
     def create_information_message(self, message: str):
-        self.console.print(Panel(f"[bold yellow]{message}[/]", title="Information", title_align="center", border_style="white"))
+        self.console.print(Panel(f"[bold yellow]{message}[/]", title="[bold green]Information[/]", title_align="center", border_style="white"))
         
     def create_error_message(self, message: str):
-        self.console.print(Panel(f"[bold red]{message}[/]", title="Error", title_align="center", border_style="white"))
+        self.console.print(Panel(f"[bold red]{message}[/]", title="[bold red]Error[/]", title_align="center", border_style="white"))
         
+    @cache
     def print_welcome_message(self):
         self.console.print(Panel("""
-                                 [bold yellow]A terminal app where you can build tables.[/]
+                                 [bold yellow]
+                                 A terminal app where you can build and edit tables.
+                                 
+                                 SQLite database supported!
+                                 [/]
                                  
                                  [bold red]Type 'help' for instructions.[/]
                                  """,
-                                 title="Terminal Table Builder", 
-                                 subtitle="Welcome!", 
+                                 title="[bold red]Terminal Table Builder[/]", 
+                                 subtitle="[bold white]Welcome![/]", 
                                  subtitle_align="center", 
                                  border_style="cyan"
                                  )
                            )
         
+    @cache
     def print_main_menu_instructions(self):
         self.console.print(Panel("""
                                  [green]
@@ -34,11 +41,13 @@ class MessagePanel:
                                  exit - Exit the application.
                                  [/]
                                  """,
-                                 title="[bold red]Main Menu[/] - [bold yellow]Instructions[/]",
+                                 title="[bold red]Main Menu[/] - [bold white]Instructions[/]",
                                  title_align="center",
                                  border_style="cyan"
                                  )
         )
+    
+    @cache
     def print_table_builder_instructions(self):
         self.console.print(Panel(""""
                                  [bold blue]Welcome to the Table Builder![/]
@@ -51,20 +60,21 @@ class MessagePanel:
                                  edit cell - Allows you to edit the content of a cell in the table.
                                  print table - Prints the table to the screen.
                                  rename - Renames the table.
-                                 print table_data - Prints the JSON data for the table.
+                                 print table data - Prints the JSON data for the table.
                                  save table - Saves the table to the curretly set database.
+                                 clear table - Clears the table from memory.
                                  load table - Loads a table from the database.
-                                 load_csv - Loads a CSV file into a formatted table.
+                                 load csv - Loads a CSV file into a formatted table.
                                  exit - Go back to the main menu.
                                  help - Prints this screen.
                                  [/]
                                  """, 
-                                 title="Table Builder", 
+                                 title="[bold red]Table Builder[/] - [bold white]Instructions[/]", 
                                  title_align="center", 
-                                 subtitle="Instructions", 
                                  border_style="cyan"
                                  ))
         
+    @cache
     def print_settings_instructions(self):
         self.console.print(Panel("""
                                  [bold pink]Welcome to the Settings![/]
@@ -74,15 +84,14 @@ class MessagePanel:
                                  Enter the setting and then the value.
                                  [/green]
                                  
-                                 [bold red]Enter 'print_settings' to show the current settings.[/]
+                                 [bold red]Enter 'print settings' to show the current settings.[/]
                                  """,
-                                 title="Settings", 
-                                 title_align="center", 
-                                 subtitle="Instructions", 
-                                 subtitle_align="center", 
+                                 title="[bold red]Settings[/] - [bold white]Instructions[/]", 
+                                 title_align="center",
                                  border_style="cyan"
                                  ))
         
+    @cache
     def print_database_instructions(self):
         self.console.print(Panel("""
                                  [bold yellow]Welcome to Databases![/]
@@ -109,7 +118,7 @@ class MessagePanel:
                                  [bold red]'Exit' to go back to main menu.[/]
                                                                  
                                  """,
-                                 title="[bold red]Database[/] - [bold yellow]Instructions[/]",
+                                 title="[bold red]Database[/] - [bold white]Instructions[/]",
                                  title_align="center",
                                  subtitle="Instructions",
                                  subtitle_align="center",

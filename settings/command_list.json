@@ -1,0 +1,42 @@
+{
+    "main_menu": [
+        "table builder",
+        "database",
+        "settings",
+        "help",
+        "exit"
+    ],
+    "settings": [
+        "autoprint_table",
+        "print settings",
+        "exit"
+    ],
+    "database": [
+        "create database",
+        "delete database",
+        "set database",
+        "show available tables",
+        "view table",
+        "delete table",
+        "show set database",
+        "help",
+        "exit"
+    ],
+    "table_builder": [
+        "print help",
+        "add column",
+        "add row",
+        "edit cell",
+        "remove column",
+        "remove row",
+        "print table",
+        "print table data",
+        "clear table",
+        "rename",
+        "laod table",
+        "load csv",
+        "save table",
+        "help",
+        "exit"
+    ]
+}

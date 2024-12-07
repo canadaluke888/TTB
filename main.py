@@ -3,9 +3,11 @@ from message_panel.message_panel import MessagePanel
 from table_builder.table_builder import TableBuilder
 from settings.settings import Settings
 from database.database import Database
+from autocomplete.autocomplete import Autocomplete
 
 console = Console()
 message_panel = MessagePanel(console)
+autocomplete = Autocomplete(console)
 settings = Settings(console)
 database = Database(console)
 
@@ -35,6 +37,7 @@ def main():
             break
         else:
             message_panel.create_error_message("Inavalid input.")
+            autocomplete.suggest_command(main_menu_command, autocomplete.main_menu_commands)
         
 if __name__ == "__main__":
     main()

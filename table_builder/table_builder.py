@@ -4,10 +4,12 @@ import sqlite3
 from rich.panel import Panel
 import csv
 import os
+from autocomplete.autocomplete import Autocomplete
 
 class TableBuilder:
     def __init__(self, console, settings, database):
         self.console = console
+        self.autocomplete = Autocomplete(self.console)
         self.settings = settings
         self.database = database
         self.message_panel = MessagePanel(self.console)
@@ -22,6 +24,7 @@ class TableBuilder:
             self.message_panel.create_error_message("Please set a database first.")
             return
 
+        connection = None  # Initialize connection to avoid UnboundLocalError
         try:
             connection = sqlite3.connect(f"database/db/{self.database.current_database}.db")
             cursor = connection.cursor()
@@ -48,7 +51,9 @@ class TableBuilder:
         except sqlite3.Error as e:
             self.message_panel.create_error_message(f"Error saving table: {e}")
         finally:
-            connection.close()
+            if connection:  # Check if connection is initialized before closing
+                connection.close()
+
             
     def load_csv(self):
         """
@@ -258,7 +263,7 @@ class TableBuilder:
             elif builder_command == "print table":
                 self.print_table()
 
-            elif builder_command == "print table_data":
+            elif builder_command == "print table data":
                 self.print_table_data()
 
             elif builder_command == "clear table":
@@ -286,3 +291,4 @@ class TableBuilder:
 
             else:
                 self.message_panel.create_error_message("Invalid Command.")
+                self.autocomplete.suggest_command(builder_command, self.autocomplete.table_builder_commands)

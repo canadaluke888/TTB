@@ -3,12 +3,13 @@ from message_panel.message_panel import MessagePanel
 import json
 from rich.panel import Panel
 import os
-
+from autocomplete.autocomplete import Autocomplete
 
 class Database:
     
     def __init__(self, console):
         self.console = console
+        self.autocomplete = Autocomplete(self.console)
         self.message_panel = MessagePanel(self.console)
         self.databases_file = "database/databases.json"
         self.databases = self.load_databases()
@@ -253,11 +254,9 @@ class Database:
             self.message_panel.create_error_message(f"Error accessing database: {e}")
         finally:
             connection.close()
-
-
             
-        
-
+    def show_set_database(self):
+        return self.message_panel.create_information_message(f"Set database: {self.current_database}")
             
     def launch_database_editor(self):
         self.message_panel.print_database_instructions()
@@ -286,3 +285,4 @@ class Database:
                 break
             else:
                 self.message_panel.create_error_message("Inavalid input.")
+                self.autocomplete.suggest_command(database_command, self.autocomplete.database_commands)
