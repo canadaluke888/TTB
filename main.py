@@ -13,6 +13,9 @@ database = Database(console)
 
 
 def main():
+    """
+    Start main application loop.
+    """
     
     message_panel.print_welcome_message()
     
