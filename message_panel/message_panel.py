@@ -36,7 +36,6 @@ class MessagePanel:
         self.console.print(Panel("""
                                  [green]
                                  table builder - Enter the table builder.
-                                 database - Enter the database editor.
                                  settings - Enter the settings.
                                  exit - Exit the application.
                                  [/]
@@ -61,9 +60,7 @@ class MessagePanel:
                                  print table - Prints the table to the screen.
                                  rename - Renames the table.
                                  print table data - Prints the JSON data for the table.
-                                 save table - Saves the table to the curretly set database.
                                  clear table - Clears the table from memory.
-                                 load table - Loads a table from the database.
                                  load csv - Loads a CSV file into a formatted table.
                                  save csv - Save the data from the table to a CSV file.
                                  exit - Go back to the main menu.
@@ -91,36 +88,3 @@ class MessagePanel:
                                  title_align="center",
                                  border_style="cyan"
                                  ))
-        
-    @cache
-    def print_database_instructions(self):
-        self.console.print(Panel("""
-                                 [bold yellow]Welcome to Databases![/]
-                                 
-                                 
-                                 [blue]
-                                 Here you can setup a database to save your tables you build in, making it easy to transfer.
-                                 [/]
-                                 
-                                 
-                                 [green]
-                                 create database - Creates a new database.
-                                 delete database - Deletes an existing database.
-                                 set database - Set an available database as the current working database.
-                                 show available databases - Prints the list of currently saved databases.
-                                 help - Shows this screen.
-                                 show available tables - Prints a list of saved tables under the currently set database.
-                                 view table - Prints the saved table to the screen from the currently saved database.
-                                 delete table - Deletes the table from the currently set database.
-                                 show set database - Shows the curretly set database.
-                                 [/]
-                                 
-                                 
-                                 [bold red]'Exit' to go back to main menu.[/]
-                                                                 
-                                 """,
-                                 title="[bold red]Database[/] - [bold white]Instructions[/]",
-                                 title_align="center",
-                                 subtitle="Instructions",
-                                 subtitle_align="center",
-                                 border_style="cyan"))

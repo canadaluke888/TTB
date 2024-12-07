@@ -11,17 +11,6 @@
         "print settings",
         "exit"
     ],
-    "database": [
-        "create database",
-        "delete database",
-        "set database",
-        "show available tables",
-        "view table",
-        "delete table",
-        "show set database",
-        "help",
-        "exit"
-    ],
     "table_builder": [
         "print help",
         "add column",

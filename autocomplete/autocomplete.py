@@ -21,8 +21,6 @@ class Autocomplete:
         
         self.settings_commands = self.get_settings_commands()
         
-        self.database_commands = self.get_database_commands()
-        
         self.table_builder_commands = self.get_table_builder_commands()
         
     @cache
@@ -37,10 +35,6 @@ class Autocomplete:
     @cache
     def get_settings_commands(self):
         return self.all_commands.get("settings")
-    
-    @cache
-    def get_database_commands(self):
-        return self.all_commands.get("database")
     
     @cache
     def get_table_builder_commands(self):
