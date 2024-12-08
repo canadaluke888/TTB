@@ -3,6 +3,9 @@ from message_panel.message_panel import MessagePanel
 import csv
 import os
 from autocomplete.autocomplete import Autocomplete
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table as PDFTable, TableStyle
+from reportlab.lib import colors
 
 class TableBuilder:
     def __init__(self, console, settings, database):
@@ -22,6 +25,60 @@ class TableBuilder:
         self.name = self.name_table()
         self.table_data = {"columns": [], "rows": []}
         self.table_saved = False
+        
+        
+    def save_table_to_pdf(self):
+        """
+        Save the current table data to a PDF file.
+        """
+        if not self.table_data["columns"] or not self.table_data["rows"]:
+            self.message_panel.create_error_message("No table data to export to PDF.")
+            return
+
+        # Prompt for the file name
+        use_table_name = self.console.input(
+            "[bold yellow]Use table name as save file name? (y/n)[/]: ").strip().lower()
+
+        if use_table_name == "y":
+            file_name = f"{self.name}.pdf"
+        elif use_table_name == "n":
+            file_name = self.console.input(
+                "[bold yellow]Enter the name of the PDF file (without extension)[/]: ").strip() + ".pdf"
+        else:
+            self.message_panel.create_error_message("Invalid input.")
+            return
+
+        try:
+            # Create the PDF document
+            pdf = SimpleDocTemplate(file_name, pagesize=letter)
+            elements = []
+
+            # Prepare the table data for the PDF
+            pdf_data = [self.table_data["columns"]]  # Header row
+            for row in self.table_data["rows"]:
+                pdf_data.append([row.get(column, "") for column in self.table_data["columns"]])
+
+            # Create the table with styling
+            table = PDFTable(pdf_data)
+            table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ]))
+
+            elements.append(table)
+
+            # Build the PDF
+            pdf.build(elements)
+            self.message_panel.create_information_message(
+                f"[bold green]Table data successfully exported to '{file_name}'.[/]"
+            )
+        except Exception as e:
+            self.message_panel.create_error_message(f"Failed to save table as PDF: {e}")
         
     def ensure_connected_database(self) -> bool:
         """
@@ -491,6 +548,9 @@ class TableBuilder:
 
             elif builder_command == "save csv":
                 self.save_to_csv()
+                
+            elif builder_command == "save pdf":
+                self.save_table_to_pdf()
 
             elif builder_command == "help":
                 self.message_panel.print_table_builder_instructions()

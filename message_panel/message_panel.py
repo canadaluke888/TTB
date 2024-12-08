@@ -125,6 +125,7 @@ class MessagePanel:
 - load csv batch: Load a bunch of CSV files automatically from a directory into the database.
 - list tables: List the avalable tables from the database.
 - save csv: Save the data from the table to a CSV file.
+- save pdf: Save the table to a PDF file.
 - exit: Go back to the main menu.
 - help: Prints this screen.
 [/]
