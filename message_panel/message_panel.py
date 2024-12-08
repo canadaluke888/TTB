@@ -120,7 +120,9 @@ class MessagePanel:
 - load table: Load a table from the database.
 - delete table: Deletes the table from the database.
 - save table: Save the table to the database.
+- print table data: Print the JSON data for the current table.
 - load csv: Loads a CSV file into a formatted table.
+- load csv batch: Load a bunch of CSV files automatically from a directory into the database.
 - list tables: List the avalable tables from the database.
 - save csv: Save the data from the table to a CSV file.
 - exit: Go back to the main menu.

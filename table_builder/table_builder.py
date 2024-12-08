@@ -171,13 +171,16 @@ class TableBuilder:
         return self.console.input("[bold yellow]Enter a name for the new table[/]: ")
 
             
-    def load_csv(self) -> None:
+    def load_csv(self, path: None) -> None:
         """
         Loads a CSV file and updates the table data for building a table.
 
         Prompts the user for the CSV file path and validates the input.
         """
-        csv_path = self.console.input("[bold yellow]Enter path to CSV file[/]: ")
+        if not path:
+            csv_path = self.console.input("[bold yellow]Enter path to CSV file[/]: ")
+        else:
+            csv_path = path
 
         # Check if the path is valid
         if not os.path.isfile(csv_path):
@@ -209,6 +212,51 @@ class TableBuilder:
                     self.print_table()
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to load CSV file: {e}")
+            
+    def load_batch_csv(self):
+        """
+        Load a batch of CSV files in a specified directory into the database.
+        """
+        directory = self.console.input("[bold yellow]Enter the directory of CSV files[/]: ")
+        
+        # Get list of files in the directory
+        if not os.path.exists(directory):
+            self.message_panel.create_error_message("Directory does not exist.")
+            return
+        
+        recursive_load = self.console.input("[bold yellow]Load CSV files from subdirectories? (y/n)[/]: ").lower()
+        csv_files = []
+
+        if recursive_load == 'y':
+            # Recursively find all CSV files
+            for root, dirs, files in os.walk(directory):
+                csv_files.extend([os.path.join(root, file) for file in files if file.endswith('.csv')])
+        elif recursive_load == 'n':
+            # Only include CSV files in the specified directory
+            csv_files = [os.path.join(directory, file) for file in os.listdir(directory) if file.endswith('.csv')]
+        else:
+            self.message_panel.create_error_message("Invalid input! Please enter 'y' or 'n'.")
+            return
+
+        self.message_panel.create_information_message(f"Found {len(csv_files)} CSV files.")
+
+        if not csv_files:
+            self.message_panel.create_error_message("No CSV files found in specified directory.")
+            return
+
+        # Process each CSV file
+        for i, file in enumerate(csv_files):
+            try:
+                self.load_csv(path=file)
+                self.name = f"Table{i+1}"
+                self.save_to_database()
+                self.name = None
+                self.message_panel.create_information_message(f"[bold green]Loaded table {i + 1}: {file}[/]")
+            except Exception as e:
+                self.message_panel.create_error_message(f"[bold red]Error loading {file}: {str(e)}[/]")
+
+        self.table_saved = True
+        self.console.print("[bold green]Batch CSV loading complete![/]")
 
     def get_num_columns(self) -> int:
         """
@@ -434,6 +482,9 @@ class TableBuilder:
                 
             elif builder_command == "load csv":
                 self.load_csv()
+                
+            elif builder_command == "load csv batch":
+                self.load_batch_csv()
             
             elif builder_command == "list tables":
                 self.list_tables()
