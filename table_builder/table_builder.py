@@ -171,7 +171,7 @@ class TableBuilder:
         return self.console.input("[bold yellow]Enter a name for the new table[/]: ")
 
             
-    def load_csv(self, path: None) -> None:
+    def load_csv(self, path: any = None) -> None:
         """
         Loads a CSV file and updates the table data for building a table.
 
