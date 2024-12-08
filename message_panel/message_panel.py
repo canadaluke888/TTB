@@ -178,11 +178,12 @@ class MessagePanel:
 - [bold cyan]list databases:[/] List all databases in a specified directory.
 - [bold cyan]select database:[/] Choose a database from a list of available databases.
 - [bold cyan]current database:[/] Show the currently connected database.
+- [bold cyan]search:[/] Search through the current  
 - [bold cyan]help:[/] Print this instruction screen.
 - [bold cyan]exit:[/] Return to the main menu.
 [/green]
 
-[bold red]Tip:[/] Use [bold cyan]list databases[/] or [bold cyan]search databases[/] to locate databases before connecting or selecting one.
+[bold red]Tip:[/] Use [bold cyan]select database[/] to view a set a database.[bold cyan]search[/] to locate table data.
                 """,
                 title="[bold red]Database Manager[/] - [bold white]Instructions[/]",
                 title_align="center",

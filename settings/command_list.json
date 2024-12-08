@@ -18,6 +18,7 @@
         "select database",
         "current database",
         "close database",
+        "search",
         "help",
         "exit"
     ],
@@ -33,6 +34,7 @@
         "clear table",
         "rename",
         "load csv",
+        "load csv batch",
         "save csv",
         "help",
         "exit"

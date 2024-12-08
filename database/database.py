@@ -19,6 +19,76 @@ class Database:
         self.cursor = None
         self.database_directory = os.path.join(os.getcwd(), "databases")
         self.ensure_database_directory()
+        
+    def search(self):
+        """
+        Search for a string in a specified table or all tables in the connected database.
+        """
+        if not self.is_connected():
+            self.message_panel.create_error_message("No database is connected. Please connect to a database first.")
+            return
+
+        try:
+            # Prompt user for the search string
+            search_string = self.console.input("[bold yellow]Enter the search query[/]: ").strip()
+            if not search_string:
+                self.message_panel.create_error_message("Search query cannot be empty.")
+                return
+
+            # Fetch all table names in the database
+            self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            tables = [row[0] for row in self.cursor.fetchall()]
+
+            if not tables:
+                self.message_panel.create_error_message("No tables found in the database.")
+                return
+
+            # Ask the user to specify a table or search all tables
+            self.console.print("[bold green]Available Tables:[/]")
+            self.console.print("[bold yellow]0. Search All Tables[/]")
+            for idx, table in enumerate(tables, start=1):
+                self.console.print(f"{idx}. {table}")
+
+            table_number = int(self.console.input("[bold yellow]Enter the table number to search (or 0 for all tables)[/]: ")) - 1
+
+            if table_number == -1:  # Search all tables
+                target_tables = tables
+            elif 0 <= table_number < len(tables):
+                target_tables = [tables[table_number]]
+            else:
+                self.message_panel.create_error_message("Invalid table number.")
+                return
+
+            # Perform the search
+            results = []
+            for table in target_tables:
+                # Safely quote the table name
+                quoted_table_name = f'"{table}"'
+                self.cursor.execute(f"SELECT * FROM {quoted_table_name}")
+                rows = self.cursor.fetchall()
+                columns = [desc[0] for desc in self.cursor.description]
+
+                # Search each row and column for the search string
+                for row_idx, row in enumerate(rows, start=1):
+                    for col_idx, value in enumerate(row):
+                        if search_string.lower() in str(value).lower():
+                            results.append((table, row_idx, columns[col_idx], value))
+
+            # Display the results
+            if not results:
+                self.message_panel.create_information_message(f"No matches found for '{search_string}'.")
+                return
+
+            self.console.print(f"[bold green]Search Results for '{search_string}':[/]")
+            for table, row_idx, column, value in results:
+                self.console.print(f"Table: {table}, Row: {row_idx}, Column: {column}, Value: {value}")
+
+        except sqlite3.Error as e:
+            self.message_panel.create_error_message(f"Search query failed: {e}")
+
+
+
+
 
     def ensure_database_directory(self):
         """
@@ -162,6 +232,9 @@ class Database:
 
             elif command == "close database":
                 self.close()
+                
+            elif command == "search":
+                self.search()
 
             elif command == "help":
                 self.message_panel.print_database_instructions()
