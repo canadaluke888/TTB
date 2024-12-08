@@ -6,6 +6,12 @@ from functools import cache
 class Autocomplete:
     
     def __init__(self, console):
+        """
+        Initialize console and command lists.
+
+        Args:
+            console (Console): Main console.
+        """
         
         self.console = console
         
