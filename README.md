@@ -27,6 +27,7 @@ Easily view and edit tables in databases from the terminal.
 - **Viewing the list of available databases:** Enter the `list databases` command.
 - **Closing an active database:** Enter the `close database` command.
 - **Viewing the current database:** Enter the `current database` command.
+- **Serching the database:** Enter the `search` command and then enter a serch query. It will return information on the location if a match is found.
 
 ### Table Builder
 - **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table. Remember that the first column added is going to be the heading row each row.
