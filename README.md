@@ -37,6 +37,7 @@ Easily view and edit tables in databases from the terminal.
 - **Editing a cell:** Enter the `edit cell` command. Enter the row index. Enter the column name. Enter the new data that you want in the cell.
 - **Printing the table:** Enter the `print table` command.
 - **Loading data from a CSV file:** Enter the `load csv` command. Enter the path to the CSV file.
+- **Loading more than one CSV file:** Enter the `load csv batch` command. Enter the path to the directory that contains the CSV files. Specifiy if you want to add the CSV files in the subdirectories.
 - **Saving data to a CSV file:** Enter the `save csv` command. You will be prompted on if you want to use the name of the table as the name of the CSV file. The CSV file will appear in the root directory of the app.
 - **Loading a table from the database:** Enter the `load table` command and then select from the list of available tables. Make sure that you have a database selected first.
 - **Saving a table to a database:** Enter the `save table` command. The table should be saved to the currently selected database.
