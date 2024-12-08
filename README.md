@@ -1,4 +1,4 @@
-# Terminal Table Builder
+# 💾 Terminal Table Builder 💾
 
 A terminal-based application that allows you to easily build and edit tabular data.
 
