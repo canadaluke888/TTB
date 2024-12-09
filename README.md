@@ -4,7 +4,17 @@ A terminal-based application that allows you to easily build and edit tabular da
 
 Easily view and edit tables in databases from the terminal.
 
-![App Screenshot](screenshots/Terminal%20Table%20Builder%20SS.png)
+## Connecting To A Database
+![Connecting to a database](screenshots/TerminalTableBuilderDatabaseSS.png)
+
+
+## Searching Data
+![Searching Data](screenshots/TerminalTableBuilderDatabaseSearchSS.png)
+
+
+## Adding Data To A Table
+![Adding data to a table](screenshots/TerminalTableBuilderAddDataSS.png)
+
 
 ## Prerequisites
 - Python 3.9+
