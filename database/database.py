@@ -62,34 +62,41 @@ class Database:
             # Perform the search
             results = []
             for table in target_tables:
+                # Fetch column information with data types
+                self.cursor.execute(f'PRAGMA table_info("{table}");')
+                columns_info = self.cursor.fetchall()
+                columns = [{"name": col[1], "type": col[2]} for col in columns_info]
+
                 # Safely quote the table name
                 quoted_table_name = f'"{table}"'
                 self.cursor.execute(f"SELECT * FROM {quoted_table_name}")
                 rows = self.cursor.fetchall()
-                columns = [desc[0] for desc in self.cursor.description]
 
                 # Search each row and column for the search string
                 for row_idx, row in enumerate(rows, start=1):
                     for col_idx, value in enumerate(row):
                         if search_string.lower() in str(value).lower():
-                            results.append((table, row_idx, columns[col_idx], value))
+                            column = columns[col_idx]
+                            results.append((table, row_idx, column["name"], column["type"], value))
 
             # Display the results
             if not results:
-                self.message_panel.create_information_message(f"No matches found for '{search_string}'.")
+                self.message_panel.create_information_message(f"No matches found for '[bold cyan]{search_string}[/]'.")
                 return
 
-            self.console.print(f"[bold green]Search Results for '{search_string}':[/]")
-            for table, row_idx, column, value in results:
+            self.console.print(f"[bold green]Search Results for '[bold cyan]{search_string}[/]':[/]")
+            for table, row_idx, column_name, column_type, value in results:
                 self.console.print(Panel(
                     f"""
-[bold red]Table[/]: [bold cyan]{table}[/]
+    [bold red]Table[/]: [bold cyan]{table}[/]
 
-[bold red]Row[/]: [bold cyan]{row_idx}[/]
+    [bold red]Row[/]: [bold cyan]{row_idx}[/]
 
-[bold red]Column[/]: [bold cyan]{column}[/]
+    [bold red]Column[/]: [bold cyan]{column_name}[/]
 
-[bold red]Value[/]: [bold cyan]{value}[/]                                         
+    [bold red]Type[/]: [bold cyan]{column_type}[/]
+
+    [bold red]Value[/]: [bold cyan]{value}[/]
                     """,
                     title="[bold red]Results[/]",
                     title_align="center",
@@ -98,13 +105,15 @@ class Database:
         except sqlite3.Error as e:
             self.message_panel.create_error_message(f"Search query failed: {e}")
 
+
+
     def ensure_database_directory(self):
         """
         Ensure the 'databases' directory exists in the current working directory.
         """
         if not os.path.exists(self.database_directory):
             os.makedirs(self.database_directory)
-            self.message_panel.create_information_message(f"Created 'databases' directory at {self.database_directory}")
+            self.message_panel.create_information_message(f"Created 'databases' directory at [bold orange]{self.database_directory}[/]")
             
     def connect(self, db_name: str):
         """
@@ -112,13 +121,13 @@ class Database:
         """
         db_path = os.path.join(self.database_directory, db_name)
         if not os.path.exists(db_path):
-            self.message_panel.create_error_message(f"Database '{db_name}' does not exist in the 'databases' directory.")
+            self.message_panel.create_error_message(f"Database '[bold cyan]{db_name}[/]' does not exist in the 'databases' directory.")
             return
         try:
             self.connection = sqlite3.connect(db_path)
             self.cursor = self.connection.cursor()
             self.current_database = db_name
-            self.message_panel.create_information_message(f"Connected to database: {db_name}")
+            self.message_panel.create_information_message(f"Connected to database: [bold cyan]{db_name}[/]")
         except sqlite3.Error as e:
             self.message_panel.create_error_message(f"Failed to connect to database: {e}")
 
@@ -155,7 +164,7 @@ class Database:
             return
         try:
             open(db_path, 'w').close()  # Create an empty file
-            self.message_panel.create_information_message(f"Database created: {db_name}")
+            self.message_panel.create_information_message(f"Database created: [bold cyan]{db_name}[/]")
             self.connect(db_name)
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to create database: {e}")
@@ -170,7 +179,7 @@ class Database:
             return
         try:
             os.remove(db_path)
-            self.message_panel.create_information_message(f"Database deleted: {db_name}")
+            self.message_panel.create_information_message(f"Database deleted: [bold cyan]{db_name}[/]")
             if self.current_database == db_name:
                 self.close()
         except Exception as e:

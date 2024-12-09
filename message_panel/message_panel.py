@@ -107,29 +107,28 @@ class MessagePanel:
                 """
 [bold blue]Welcome to the Table Builder![/]
 
-[green]
-- add column: Add a column to the table.
-- add row: Add a row to the table.
-- remove column: Removes a column from the table.
-- remove row: Removes a row from the table.
-- edit cell: Allows you to edit the content of a cell in the table.
-- print table: Prints the table to the screen.
-- rename: Renames the table.
-- print table data: Prints the JSON data for the table.
-- clear table: Clears the table from memory.
-- load table: Load a table from the database.
-- delete table: Deletes the table from the database.
-- save table: Save the table to the database.
-- print table data: Print the JSON data for the current table.
-- load csv: Loads a CSV file into a formatted table.
-- load csv batch: Load a bunch of CSV files automatically from a directory into the database.
-- list tables: List the avalable tables from the database.
-- save csv: Save the data from the table to a CSV file.
-- save pdf: Save the table to a PDF file.
-- save json: Save the table data to a JSON file.
-- exit: Go back to the main menu.
-- help: Prints this screen.
-[/]
+- [bold cyan]add column[/]: Add a column to the table.
+- [bold cyan]change type[/]: Change the data type for a column.
+- [bold cyan]add row[/]: Add a row to the table.
+- [bold cyan]remove column[/]: Removes a column from the table.
+- [bold cyan]remove row[/]: Removes a row from the table.
+- [bold cyan]edit cell[/]: Allows you to edit the content of a cell in the table.
+- [bold cyan]print table[/]: Prints the table to the screen.
+- [bold cyan]rename[/]: Renames the table.
+- [bold cyan]print table data[/]: Prints the JSON data for the table.
+- [bold cyan]clear table[/]: Clears the table from memory.
+- [bold cyan]load table[/]: Load a table from the database.
+- [bold cyan]delete table[/]: Deletes the table from the database.
+- [bold cyan]save table[/]: Save the table to the database.
+- [bold cyan]print table data[/]: Print the JSON data for the current table.
+- [bold cyan]load csv[/]: Loads a CSV file into a formatted table.
+- [bold cyan]load csv batch[/]: Load a bunch of CSV files automatically from a directory into the database.
+- [bold cyan]list tables[/]: List the avalable tables from the database.
+- [bold cyan]save csv[/]: Save the data from the table to a CSV file.
+- [bold cyan]save pdf[/]: Save the table to a PDF file.
+- [bold cyan]save json[/]: Save the table data to a JSON file.
+- [bold cyan]exit[/]: Go back to the main menu.
+- [bold cyan]help[/]: Prints this screen.
                 """,
                 title="[bold red]Table Builder[/] - [bold white]Instructions[/]",
                 title_align="center",
@@ -185,7 +184,7 @@ class MessagePanel:
 - [bold cyan]exit:[/] Return to the main menu.
 [/green]
 
-[bold red]Tip:[/] Use [bold cyan]'select database'[/] to view a set a database. [bold cyan]'search'[/] to locate table data.
+[bold red]Tip:[/] Use [bold cyan]'select database'[/] to view and set a database. [bold cyan]'search'[/] to locate table data.
                 """,
                 title="[bold red]Database Manager[/] - [bold white]Instructions[/]",
                 title_align="center",

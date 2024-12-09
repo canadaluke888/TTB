@@ -31,11 +31,12 @@ Easily view and edit tables in databases from the terminal.
 
 ### Table Builder
 - **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table. Remember that the first column added is going to be the heading row each row.
-- **Adding a column:** Enter the `add column` command and then enter the name for the heading.
-- **Adding a row:** Enter the `add row` command and the program will walk through each heading allowing you to enter data for each cell.
+- **Adding a column:** Enter the `add column` command. Enter the name for the column. Specify the data type for the column.
+- **Changing the data type for a column:** Enter the `change type` command. Enter the name of the column that you want to change the data type for.
+- **Adding a row:** Enter the `add row` command and the program will walk through each heading allowing you to enter data for each cell. Be sure to enter the correct data type that you specified for the column.
 - **Removing a column:** Enter the `remove column` command. Enter the column name.
 - **Removing a row:** Enter the `remove row` command. Enter the row index.
-- **Editing a cell:** Enter the `edit cell` command. Enter the row index. Enter the column name. Enter the new data that you want in the cell.
+- **Editing a cell:** Enter the `edit cell` command. Enter the index for the cell that is dislpayed on the screen. For example, if you wanted to edit the second row of the second column, you would enter '2,2'. After entering the index for the cell, you can then enter the new information that you want in the cell.
 - **Printing the table:** Enter the `print table` command.
 - **Loading data from a CSV file:** Enter the `load csv` command. Enter the path to the CSV file.
 - **Loading more than one CSV file:** Enter the `load csv batch` command. Enter the path to the directory that contains the CSV files. Specifiy if you want to add the CSV files in the subdirectories.

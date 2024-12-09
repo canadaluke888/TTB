@@ -27,8 +27,7 @@ class TableBuilder:
         self.name = self.name_table()
         self.table_data = {"columns": [], "rows": []}
         self.table_saved = False
-        
-        
+
     def save_table_to_pdf(self):
         """
         Save the current table data to a PDF file.
@@ -77,7 +76,7 @@ class TableBuilder:
             # Build the PDF
             pdf.build(elements)
             self.message_panel.create_information_message(
-                f"[bold green]Table data successfully exported to '{file_name}'.[/]"
+                f"Table data successfully exported to '[bold cyan]{file_name}[/]'."
             )
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to save table as PDF: {e}")
@@ -93,41 +92,67 @@ class TableBuilder:
         
     def save_to_database(self) -> None:
         """
-        Save the current table data to the connected database.
+        Save the current table data to the connected database, including column data types.
         """
         if not self.ensure_connected_database():
+            return
+
+        if not self.table_data["columns"]:
+            self.message_panel.create_error_message("No columns defined. Add columns before saving.")
             return
 
         try:
             # Safely quote the table name
             quoted_table_name = f'"{self.name}"'
-            columns_definition = ", ".join(f'"{col}" TEXT' for col in self.table_data["columns"])
-            
+
+            # Generate columns definition with data types
+            columns_definition = []
+            for column in self.table_data["columns"]:
+                column_name = f'"{column["name"]}"'
+                column_type = column["type"].upper()
+                if column_type == "STR":
+                    column_type = "TEXT"  # Map 'str' to SQLite 'TEXT'
+                elif column_type == "INT":
+                    column_type = "INTEGER"
+                elif column_type == "FLOAT":
+                    column_type = "REAL"
+                elif column_type == "BOOL":
+                    column_type = "BOOLEAN"
+                else:
+                    self.message_panel.create_error_message(f"Unsupported data type for column '[bold cyan]{column['name']}': {column['type']}[/]'")
+                    return
+
+                columns_definition.append(f"{column_name} {column_type}")
+            columns_definition_str = ", ".join(columns_definition)
+
             # Create the table if it does not exist
-            self.database.cursor.execute(f"CREATE TABLE IF NOT EXISTS {quoted_table_name} ({columns_definition})")
-            
+            self.database.cursor.execute(f"CREATE TABLE IF NOT EXISTS {quoted_table_name} ({columns_definition_str})")
+
             # Clear existing data
             self.database.cursor.execute(f"DELETE FROM {quoted_table_name}")
 
-            # Insert new rows
+            # Insert rows
             for row in self.table_data["rows"]:
-                column_names = ", ".join(f'"{col}"' for col in self.table_data["columns"])
+                column_names = ", ".join(f'"{col["name"]}"' for col in self.table_data["columns"])
                 placeholders = ", ".join("?" for _ in self.table_data["columns"])
-                values = [row.get(col, "") for col in self.table_data["columns"]]
+                values = [row.get(col["name"], None) for col in self.table_data["columns"]]
                 self.database.cursor.execute(
                     f"INSERT INTO {quoted_table_name} ({column_names}) VALUES ({placeholders})", values
                 )
 
             self.database.connection.commit()
             self.table_saved = True
-            self.message_panel.create_information_message(f"[bold green]Table '{self.name}' saved to database '{self.database.get_current_database()}'.[/]")
+            self.message_panel.create_information_message(
+                f"Table '[bold cyan]{self.name}[/]' saved to database '[bold pink]{self.database.get_current_database()}[/]'."
+            )
         except Exception as e:
-            self.message_panel.create_error_message(f"Failed to saved to database: {e}")
+            self.message_panel.create_error_message(f"Failed to save table to database: {e}")
+
 
             
     def load_from_database(self) -> None:
         """
-        Load a table from the connected database.
+        Load a table from the connected database, including column data types.
         """
         if not self.ensure_connected_database():
             return
@@ -145,26 +170,51 @@ class TableBuilder:
                 self.console.print(f"{idx}. {table}")
 
             table_number = int(self.console.input("[bold yellow]Enter the number of the table to load[/]: ")) - 1
-            if 0 <= table_number < len(tables):
-                table_name = tables[table_number]
-                quoted_table_name = f'"{table_name}"'  # Safely quote the table name
-                self.database.cursor.execute(f"SELECT * FROM {quoted_table_name}")
-                rows = self.database.cursor.fetchall()
-                columns = [desc[0] for desc in self.database.cursor.description]
-
-                self.table_data["columns"] = columns
-                self.table_data["rows"] = [
-                    {col: row[i] for i, col in enumerate(columns)}
-                    for row in rows
-                ]
-
-                self.name = table_name
-                self.table_saved = True
-                self.message_panel.create_information_message(f"[bold green]Table '{table_name}' loaded successfully from database '{self.database.get_current_database()}'.[/]")
-                if self.settings.get_autoprint_table() == "on":
-                    self.print_table()
-            else:
+            if not (0 <= table_number < len(tables)):
                 self.message_panel.create_error_message("Invalid table number.")
+                return
+
+            table_name = tables[table_number]
+            quoted_table_name = f'"{table_name}"'
+
+            # Fetch column information
+            self.database.cursor.execute(f"PRAGMA table_info({quoted_table_name})")
+            columns_info = self.database.cursor.fetchall()
+
+            # Map SQL types back to program types
+            sql_to_program_types = {
+                "TEXT": "str",
+                "INTEGER": "int",
+                "REAL": "float",
+                "BOOLEAN": "bool"
+            }
+            columns = [{"name": col[1], "type": sql_to_program_types.get(col[2].upper(), "str")} for col in columns_info]
+
+            # Fetch rows
+            self.database.cursor.execute(f"SELECT * FROM {quoted_table_name}")
+            raw_rows = self.database.cursor.fetchall()
+
+            # Convert rows to dictionaries and handle boolean conversion
+            rows = []
+            for raw_row in raw_rows:
+                row = {}
+                for idx, column in enumerate(columns):
+                    value = raw_row[idx]
+                    if column["type"] == "bool":
+                        value = bool(value)  # Convert 1/0 to True/False
+                    row[column["name"]] = value
+                rows.append(row)
+
+            self.table_data["columns"] = columns
+            self.table_data["rows"] = rows
+
+            self.name = table_name
+            self.table_saved = True
+            self.message_panel.create_information_message(
+                f"Table '[bold cyan]{table_name}[/]' loaded successfully from database '[bold pink]{self.database.get_current_database()}[/]'."
+            )
+            if self.settings.get_autoprint_table() == "on":
+                self.print_table()
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to load table: {e}")
 
@@ -220,7 +270,7 @@ class TableBuilder:
 
             self.table_saved = True
             self.message_panel.create_information_message(
-                f"Table data successfully saved to '{file_name}'."
+                f"Table data successfully saved to '[bold orange]{file_name}[/]'."
             )
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to save file: {e}")
@@ -248,7 +298,7 @@ class TableBuilder:
 
             self.table_saved = True
             self.message_panel.create_information_message(
-                f"Table data successfully saved to '{file_name}'."
+                f"Table data successfully saved to '[bold orange]{file_name}[/]'."
             )
 
             
@@ -319,7 +369,7 @@ class TableBuilder:
             self.message_panel.create_error_message("Invalid input! Please enter 'y' or 'n'.")
             return
 
-        self.message_panel.create_information_message(f"Found {len(csv_files)} CSV files.")
+        self.message_panel.create_information_message(f"Found [bold cyan]{len(csv_files)}[/] CSV files.")
 
         if not csv_files:
             self.message_panel.create_error_message("No CSV files found in specified directory.")
@@ -332,9 +382,9 @@ class TableBuilder:
                 self.name = f"Table{i+1}"
                 self.save_to_database()
                 self.name = None
-                self.message_panel.create_information_message(f"[bold green]Loaded table {i + 1}: {file}[/]")
+                self.message_panel.create_information_message(f"Loaded table [bold cyan]{i + 1}: {file}[/]")
             except Exception as e:
-                self.message_panel.create_error_message(f"[bold red]Error loading {file}: {str(e)}[/]")
+                self.message_panel.create_error_message(f"Error loading [bold orange]{file}: {str(e)}[/]")
 
         self.table_saved = True
         self.console.print("[bold green]Batch CSV loading complete![/]")
@@ -355,44 +405,207 @@ class TableBuilder:
 
     def add_column(self) -> None:
         """
-        Adds a column to the table data.
+        Adds a column to the table data, specifying the column name and data type from a list of options.
         """
-        column_name = self.console.input("[bold yellow]Enter column name[/]: ")
-        if column_name not in self.table_data["columns"]:
-            self.table_data["columns"].append(column_name)
-            # Add empty values for the new column to existing rows
-            for row in self.table_data["rows"]:
-                row[column_name] = ""
-            self.table_saved = False
-            self.message_panel.create_information_message("Column added.")
-        else:
+        column_name = self.console.input("[bold yellow]Enter column name[/]: ").strip()
+
+        # Check if the column already exists
+        if column_name in [col["name"] for col in self.table_data["columns"]]:
             self.message_panel.create_error_message("Column already exists.")
+            return
+
+        # Display available types for selection
+        types = ["int", "float", "str", "bool"]
+        self.console.print("[bold green]Available Types:[/]")
+        for idx, t in enumerate(types, start=1):
+            self.console.print(f"{idx}. {t}")
+
+        try:
+            type_number = int(self.console.input("[bold yellow]Enter the number of the type for this column[/]: ")) - 1
+            if not (0 <= type_number < len(types)):
+                self.message_panel.create_error_message("Invalid type number.")
+                return
+            selected_type = types[type_number]
+        except ValueError:
+            self.message_panel.create_error_message("Invalid input. Please enter a number.")
+            return
+
+        # Add the column with the selected type
+        self.table_data["columns"].append({"name": column_name, "type": selected_type})
+        # Add empty values for the new column to existing rows
+        for row in self.table_data["rows"]:
+            row[column_name] = ""
+        self.table_saved = False
+        self.message_panel.create_information_message(
+            f"Column '[bold cyan]{column_name}[/]' added with type '[bold red]{selected_type}'.[/]"
+        )
+
+    def change_column_type(self) -> None:
+        """
+        Change the data type of a specific column in the table.
+        """
+        if not self.table_data["columns"]:
+            self.message_panel.create_error_message("No columns defined. Add columns before changing types.")
+            return
+
+        # Display available columns for selection
+        self.console.print("[bold green]Available Columns:[/]")
+        for idx, column in enumerate(self.table_data["columns"], start=1):
+            self.console.print(f"{idx}. {column['name']} (Current Type: {column['type']})")
+
+        try:
+            column_number = int(self.console.input("[bold yellow]Enter the number of the column to change type[/]: ")) - 1
+            if not (0 <= column_number < len(self.table_data["columns"])):
+                self.message_panel.create_error_message("Invalid column number.")
+                return
+            selected_column = self.table_data["columns"][column_number]
+        except ValueError:
+            self.message_panel.create_error_message("Invalid input. Please enter a number.")
+            return
+
+        # Display available types for selection
+        types = ["int", "float", "str", "bool"]
+        self.console.print("[bold green]Available Types:[/]")
+        for idx, t in enumerate(types, start=1):
+            self.console.print(f"{idx}. {t}")
+
+        try:
+            type_number = int(self.console.input("[bold yellow]Enter the number of the new type[/]: ")) - 1
+            if not (0 <= type_number < len(types)):
+                self.message_panel.create_error_message("Invalid type number.")
+                return
+            new_type = types[type_number]
+        except ValueError:
+            self.message_panel.create_error_message("Invalid input. Please enter a number.")
+            return
+
+        # Confirm the change
+        confirm = self.console.input(
+            f"[bold red]Are you sure you want to change column '{selected_column['name']}' "
+            f"from '{selected_column['type']}' to '{new_type}'? (y/n)[/]: "
+        ).strip().lower()
+
+        if confirm == "y":
+            # Apply the type change
+            selected_column["type"] = new_type
+            self.message_panel.create_information_message(
+                f"Column '[bold cyan]{selected_column['name']}[/]' type changed to '[bold red]{new_type}'.[/]"
+            )
+            self.table_saved = False
+        else:
+            self.message_panel.create_information_message("[bold yellow]Column type change cancelled.[/]")
+
+
 
     def add_row(self) -> None:
         """
-        Adds a row to the table data.
+        Adds a row to the table data with validation for column data types.
         """
+        if not self.table_data["columns"]:
+            self.message_panel.create_error_message("No columns defined. Add columns before adding rows.")
+            return
+
         row_data = {}
         for column in self.table_data["columns"]:
-            cell_data = self.console.input(f"[bold yellow]Enter data for column {column}[/]: ")
-            row_data[column] = cell_data
+            column_name = column["name"]
+            data_type = column["type"]
+
+            while True:
+                cell_data = self.console.input(f"[bold yellow]Enter data for column '[bold cyan]{column_name}[/]' ([bold red]{data_type})[/]: ").strip()
+                # Validate data type
+                if data_type == "int":
+                    if cell_data.isdigit():
+                        row_data[column_name] = int(cell_data)
+                        break
+                    else:
+                        self.message_panel.create_error_message("Invalid data. Expected an integer.")
+                elif data_type == "float":
+                    try:
+                        row_data[column_name] = float(cell_data)
+                        break
+                    except ValueError:
+                        self.message_panel.create_error_message("Invalid data. Expected a float.")
+                elif data_type == "str":
+                    row_data[column_name] = cell_data  # Strings need no conversion
+                    break
+                elif data_type == "bool":
+                    if cell_data.lower() in ["true", "false"]:
+                        row_data[column_name] = cell_data.lower() == "true"
+                        break
+                    else:
+                        self.message_panel.create_error_message("Invalid data. Expected 'true' or 'false'.")
+
         self.table_data["rows"].append(row_data)
         self.table_saved = False
-        self.message_panel.create_information_message("Row added.")
+        self.message_panel.create_information_message("Row added with validated data.")
+
 
     def edit_cell(self) -> None:
         """
-        Edits the cell content by accessing the table data based on row index and column name.
+        Edits the cell content using direct indexing.
         """
-        row_number = int(self.console.input("[bold yellow]Enter row number to edit (1-based index)[/]: ")) - 1
-        column_name = self.console.input("[bold yellow]Enter column name[/]: ")
-        if 0 <= row_number < len(self.table_data["rows"]) and column_name in self.table_data["columns"]:
-            new_data = self.console.input(f"[bold yellow]Enter new data for cell in row {row_number + 1}, column {column_name}[/]: ")
-            self.table_data["rows"][row_number][column_name] = new_data
+        if not self.table_data["columns"] or not self.table_data["rows"]:
+            self.message_panel.create_error_message("No table data to edit. Add rows and columns first.")
+            return
+
+        # Display table cells with their indices
+        self.console.print("[bold green]Table Cells:[/]")
+        for row_idx, row in enumerate(self.table_data["rows"], start=1):
+            row_display = [
+                f"({row_idx},{col_idx + 1}) {row[col['name']]}" for col_idx, col in enumerate(self.table_data["columns"])
+            ]
+            self.console.print(f"Row {row_idx}: " + " | ".join(row_display))
+
+        try:
+            # Prompt for cell index
+            cell_position = self.console.input("[bold yellow]Enter cell position as 'row,column' (e.g., 1,2)[/]: ").strip()
+            row_idx, col_idx = map(int, cell_position.split(","))
+            row_idx -= 1  # Convert to 0-based index
+            col_idx -= 1  # Convert to 0-based index
+
+            if not (0 <= row_idx < len(self.table_data["rows"]) and 0 <= col_idx < len(self.table_data["columns"])):
+                self.message_panel.create_error_message("Invalid cell position.")
+                return
+
+            # Fetch column and its type
+            column = self.table_data["columns"][col_idx]
+            column_name = column["name"]
+            column_type = column["type"]
+
+            # Prompt for new value with type validation
+            while True:
+                new_data = self.console.input(f"[bold yellow]Enter new data for cell ([bold cyan]{row_idx + 1},{col_idx + 1}[/]) ([bold red]{column_name}[/]: [bold blue]{column_type})[/]: ").strip()
+                if column_type == "int" and new_data.isdigit():
+                    new_value = int(new_data)
+                    break
+                elif column_type == "float":
+                    try:
+                        new_value = float(new_data)
+                        break
+                    except ValueError:
+                        self.message_panel.create_error_message("Invalid data. Expected a float.")
+                elif column_type == "bool":
+                    if new_data.lower() in ["true", "false"]:
+                        new_value = new_data.lower() == "true"
+                        break
+                    else:
+                        self.message_panel.create_error_message("Invalid data. Expected 'true' or 'false'.")
+                elif column_type == "str":
+                    new_value = new_data
+                    break
+                else:
+                    self.message_panel.create_error_message(f"Unsupported data type: [bold cyan]{column_type}[/]")
+
+            # Update the cell
+            self.table_data["rows"][row_idx][column_name] = new_value
             self.table_saved = False
-            self.message_panel.create_information_message("Cell updated.")
-        else:
-            self.message_panel.create_error_message("Invalid row number or column name.")
+            self.message_panel.create_information_message("Cell updated successfully.")
+
+        except ValueError:
+            self.message_panel.create_error_message("Invalid input format. Use 'row,column'.")
+        except Exception as e:
+            self.message_panel.create_error_message(f"Failed to edit cell: {e}")
+
 
     def remove_column(self) -> None:
         """
@@ -433,7 +646,7 @@ class TableBuilder:
             tables = [row[0] for row in self.database.cursor.fetchall()]
 
             if not tables:
-                self.console.print("[bold yellow]No tables found in the database.[/]")
+                self.message_panel.create_error_message("[bold yellow]No tables found in the database.[/]")
                 return
 
             # Display the available tables
@@ -450,18 +663,18 @@ class TableBuilder:
                 quoted_table_name = f'"{table_name}"'  # Safely quote the table name
 
                 # Confirm deletion
-                confirm = self.console.input(f"[bold red]Are you sure you want to delete table '{table_name}'? (y/n)[/]: ").lower().strip()
+                confirm = self.console.input(f"[bold red]Are you sure you want to delete table '[bold cyan]{table_name}[/]'? (y/n)[/]: ").lower().strip()
                 if confirm == 'y':
                     # Execute deletion
                     self.database.cursor.execute(f"DROP TABLE {quoted_table_name}")
                     self.database.connection.commit()
-                    self.console.print(f"[bold green]Table '{table_name}' has been deleted successfully.[/]")
+                    self.message_panel.create_information_message(f"Table '[bold cyan]{table_name}[/]' has been deleted successfully.")
                 else:
-                    self.console.print("[bold yellow]Table deletion cancelled.[/]")
+                    self.message_panel.create_information_message("[bold yellow]Table deletion cancelled.[/]")
             else:
-                self.console.print("[bold red]Invalid table number.[/]")
+                self.message_panel.create_error_message("[bold red]Invalid table number.[/]")
         except Exception as e:
-            self.console.print(f"[bold red]Failed to delete table: {e}[/]")
+            self.message_panel.create_error_message(f"[bold red]Failed to delete table: {e}[/]")
 
 
     def build_table(self) -> Table:
@@ -471,15 +684,26 @@ class TableBuilder:
         Returns:
             Table: The rendered table with all of the data.
         """
+        if not self.table_data["columns"]:
+            self.message_panel.create_error_message("No columns defined. Add columns before building the table.")
+            return Table(border_style="yellow", show_lines=True)
+
+        # Create a Rich Table instance
         table = Table(title=self.name, border_style="yellow", show_lines=True)
-        # Add columns
+
+        # Add columns with type information
         for column in self.table_data["columns"]:
-            table.add_column(column, style="cyan")
+            column_name = column["name"]
+            column_type = column["type"]
+            table.add_column(f"{column_name} ({column_type})", style="cyan")
+
         # Add rows
         for row in self.table_data["rows"]:
-            row_values = [row.get(column, "") for column in self.table_data["columns"]]
+            row_values = [str(row.get(column["name"], "")) for column in self.table_data["columns"]]
             table.add_row(*row_values, style="magenta")
+
         return table
+
 
     def print_table(self) -> None:
         """
@@ -515,6 +739,12 @@ class TableBuilder:
 
             elif builder_command == "add column":
                 self.add_column()
+
+                if self.settings.get_autoprint_table() == "on":
+                    self.print_table()
+
+            elif builder_command == "change type":
+                self.change_column_type()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
 
