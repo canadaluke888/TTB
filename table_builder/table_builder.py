@@ -6,6 +6,7 @@ from autocomplete.autocomplete import Autocomplete
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table as PDFTable, TableStyle
 from reportlab.lib import colors
+import json
 
 class TableBuilder:
     def __init__(self, console, settings, database):
@@ -226,6 +227,28 @@ class TableBuilder:
     def name_table(self) -> str:
         self.table_saved = False
         return self.console.input("[bold yellow]Enter a name for the new table[/]: ")
+    
+    def save_to_json(self):
+        """Save the table data to a JSON file."""
+        use_table_name = self.console.input(
+            "[bold yellow]Use table name as save file name? (y/n)[/]: ").lower().strip()
+
+        if use_table_name == "y":
+            file_name = f"{self.name}.json"
+        elif use_table_name == "n":
+            file_name = self.console.input(
+                "[bold yellow]Enter the name of the file (without extension)[/]: ") + ".json"
+        else:
+            self.message_panel.create_error_message("Invalid input.")
+            return
+        
+        with open(file_name, 'w') as f:
+            json.dump(self.table_data, f, indent=4)
+
+            self.table_saved = True
+            self.message_panel.create_information_message(
+                f"Table data successfully saved to '{file_name}'."
+            )
 
             
     def load_csv(self, path: any = None) -> None:
@@ -551,6 +574,9 @@ class TableBuilder:
                 
             elif builder_command == "save pdf":
                 self.save_table_to_pdf()
+
+            elif builder_command == "save json":
+                self.save_to_json()
 
             elif builder_command == "help":
                 self.message_panel.print_table_builder_instructions()

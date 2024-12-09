@@ -126,6 +126,7 @@ class MessagePanel:
 - list tables: List the avalable tables from the database.
 - save csv: Save the data from the table to a CSV file.
 - save pdf: Save the table to a PDF file.
+- save json: Save the table data to a JSON file.
 - exit: Go back to the main menu.
 - help: Prints this screen.
 [/]
@@ -184,7 +185,7 @@ class MessagePanel:
 - [bold cyan]exit:[/] Return to the main menu.
 [/green]
 
-[bold red]Tip:[/] Use [bold cyan]select database[/] to view a set a database.[bold cyan]search[/] to locate table data.
+[bold red]Tip:[/] Use [bold cyan]'select database'[/] to view a set a database. [bold cyan]'search'[/] to locate table data.
                 """,
                 title="[bold red]Database Manager[/] - [bold white]Instructions[/]",
                 title_align="center",
