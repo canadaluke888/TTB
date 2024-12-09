@@ -3,7 +3,7 @@ import os
 from rich.console import Console
 from message_panel.message_panel import MessagePanel
 from autocomplete.autocomplete import Autocomplete
-
+from rich.panel import Panel
 
 class Database:
     def __init__(self, console: Console):
@@ -81,14 +81,22 @@ class Database:
 
             self.console.print(f"[bold green]Search Results for '{search_string}':[/]")
             for table, row_idx, column, value in results:
-                self.console.print(f"Table: {table}, Row: {row_idx}, Column: {column}, Value: {value}")
+                self.console.print(Panel(
+                    f"""
+[bold red]Table[/]: [bold cyan]{table}[/]
+
+[bold red]Row[/]: [bold cyan]{row_idx}[/]
+
+[bold red]Column[/]: [bold cyan]{column}[/]
+
+[bold red]Value[/]: [bold cyan]{value}[/]                                         
+                    """,
+                    title="[bold red]Results[/]",
+                    title_align="center",
+                    border_style="cyan"))
 
         except sqlite3.Error as e:
             self.message_panel.create_error_message(f"Search query failed: {e}")
-
-
-
-
 
     def ensure_database_directory(self):
         """
