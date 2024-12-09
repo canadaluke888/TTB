@@ -5,7 +5,7 @@ A terminal-based application that allows you to easily build and edit tabular da
 Easily view and edit tables in databases from the terminal.
 
 ## Connecting To A Database
-![Connecting to a database](screenshots/TerminalTableBuilderDatabaseSS.png)
+![Connecting to a database](screenshots/TerminalTableBuilderDatabaseSetup.png)
 
 
 ## Searching Data
