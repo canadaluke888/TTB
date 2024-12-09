@@ -7,6 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table as PDFTable, TableStyle
 from reportlab.lib import colors
 import json
+from rich.panel import Panel
 
 class TableBuilder:
     def __init__(self, console, settings, database):
@@ -487,11 +488,11 @@ class TableBuilder:
         table = self.build_table()
         self.console.print(table)
 
-    def print_table_data(self) -> None:
+    def print_table_data(self) -> Panel:
         """
         Prints the table data to the screen.
         """
-        self.console.print(self.table_data)
+        self.console.print(Panel(str(self.table_data), title="[bold red]Table Data[/]", title_align="center", border_style="cyan"))
 
     def clear_table(self) -> None:
         """
