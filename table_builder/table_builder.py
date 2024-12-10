@@ -28,57 +28,6 @@ class TableBuilder:
         self.table_data = {"columns": [], "rows": []}
         self.table_saved = False
 
-    def interpret_column_types(self):
-        """
-        Automatically interpret data types for columns based on the first row of data.
-        """
-        if not self.table_data["columns"] or not self.table_data["rows"]:
-            self.message_panel.create_error_message("No data available to interpret column types.")
-            return
-
-        # Default to the first row for type inference
-        first_row = self.table_data["rows"][0]
-        inferred_types = {}
-
-        for column_name in self.table_data["columns"]:
-            column_values = [row[column_name] for row in self.table_data["rows"] if column_name in row]
-            
-            # Infer types based on the first non-empty value
-            for value in column_values:
-                if value.isdigit():
-                    inferred_types[column_name] = "int"
-                    break
-                try:
-                    float(value)
-                    inferred_types[column_name] = "float"
-                    break
-                except ValueError:
-                    if value.lower() in ["true", "false"]:
-                        inferred_types[column_name] = "bool"
-                        break
-                    else:
-                        inferred_types[column_name] = "str"
-                        break
-            else:
-                inferred_types[column_name] = "str"  # Default type if no valid value is found
-
-        # Display inferred types to the user
-        self.console.print("[bold green]Inferred Column Types:[/]")
-        for column_name, column_type in inferred_types.items():
-            self.console.print(f"[bold cyan]{column_name}[/]: {column_type}")
-
-        # Ask the user to confirm or modify inferred types
-        confirm = self.console.input("[bold yellow]Accept inferred types? (y/n)[/]: ").strip().lower()
-        if confirm == "y":
-            # Apply inferred types to the table
-            for column in self.table_data["columns"]:
-                column["type"] = inferred_types[column["name"]]
-            self.message_panel.create_information_message("Column types updated based on inferred types.")
-        elif confirm == "n":
-            self.message_panel.create_information_message("You can manually change column types using 'change type'.")
-        else:
-            self.message_panel.create_error_message("Invalid input. No changes made to column types.")
-
     def save_table_to_pdf(self):
         """
         Save the current table data to a PDF file.
