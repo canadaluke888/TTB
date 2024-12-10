@@ -42,7 +42,7 @@ Easily view and edit tables in databases from the terminal.
 ### Table Builder
 - **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table. Remember that the first column added is going to be the heading row each row.
 - **Adding a column:** Enter the `add column` command. Enter the name for the column. Specify the data type for the column.
-- **Changing the data type for a column:** Enter the `change type` command. Enter the name of the column that you want to change the data type for.
+- **Changing the data type for a column:** Enter the `change type` command. Enter the number corresponding to the column that you want to change the data type for. Enter the number corresponding to the data type that you want to change the column to.
 - **Adding a row:** Enter the `add row` command and the program will walk through each heading allowing you to enter data for each cell. Be sure to enter the correct data type that you specified for the column.
 - **Removing a column:** Enter the `remove column` command. Enter the column name.
 - **Removing a row:** Enter the `remove row` command. Enter the row index.
