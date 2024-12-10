@@ -113,7 +113,7 @@ class Database:
         """
         if not os.path.exists(self.database_directory):
             os.makedirs(self.database_directory)
-            self.message_panel.create_information_message(f"Created 'databases' directory at [bold orange]{self.database_directory}[/]")
+            self.message_panel.create_information_message(f"Created 'databases' directory at [bold red]{self.database_directory}[/]")
             
     def connect(self, db_name: str):
         """

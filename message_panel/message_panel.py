@@ -146,7 +146,7 @@ class MessagePanel:
         self.console.print(
             Panel(
                 """
-[bold pink]Welcome to the Settings![/]
+[bold yellow]Welcome to the Settings![/]
 
 [bold yellow]Instructions:[/]
 [green]

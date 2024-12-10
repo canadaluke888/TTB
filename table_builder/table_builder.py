@@ -55,9 +55,13 @@ class TableBuilder:
             elements = []
 
             # Prepare the table data for the PDF
-            pdf_data = [self.table_data["columns"]]  # Header row
+            # Extract column names from the dictionaries
+            column_headers = [column["name"] for column in self.table_data["columns"]]
+            pdf_data = [column_headers]  # Header row
+
+            # Add row data
             for row in self.table_data["rows"]:
-                pdf_data.append([row.get(column, "") for column in self.table_data["columns"]])
+                pdf_data.append([row.get(column["name"], "") for column in self.table_data["columns"]])
 
             # Create the table with styling
             table = PDFTable(pdf_data)
@@ -80,6 +84,7 @@ class TableBuilder:
             )
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to save table as PDF: {e}")
+
         
     def ensure_connected_database(self) -> bool:
         """
@@ -143,7 +148,7 @@ class TableBuilder:
             self.database.connection.commit()
             self.table_saved = True
             self.message_panel.create_information_message(
-                f"Table '[bold cyan]{self.name}[/]' saved to database '[bold pink]{self.database.get_current_database()}[/]'."
+                f"Table '[bold cyan]{self.name}[/]' saved to database '[bold red]{self.database.get_current_database()}[/]'."
             )
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to save table to database: {e}")
@@ -211,7 +216,7 @@ class TableBuilder:
             self.name = table_name
             self.table_saved = True
             self.message_panel.create_information_message(
-                f"Table '[bold cyan]{table_name}[/]' loaded successfully from database '[bold pink]{self.database.get_current_database()}[/]'."
+                f"Table '[bold cyan]{table_name}[/]' loaded successfully from database '[bold red]{self.database.get_current_database()}[/]'."
             )
             if self.settings.get_autoprint_table() == "on":
                 self.print_table()
@@ -270,7 +275,7 @@ class TableBuilder:
 
             self.table_saved = True
             self.message_panel.create_information_message(
-                f"Table data successfully saved to '[bold orange]{file_name}[/]'."
+                f"Table data successfully saved to '[bold red]{file_name}[/]'."
             )
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to save file: {e}")
@@ -298,7 +303,7 @@ class TableBuilder:
 
             self.table_saved = True
             self.message_panel.create_information_message(
-                f"Table data successfully saved to '[bold orange]{file_name}[/]'."
+                f"Table data successfully saved to '[bold red]{file_name}[/]'."
             )
 
             
@@ -390,7 +395,7 @@ class TableBuilder:
                 # Assign a unique name for each table
                 self.name = f"Table_{os.path.splitext(os.path.basename(file))[0]}_{i + 1}"
                 self.save_to_database()
-                self.message_panel.create_information_message(f"Successfully loaded table '[bold cyan]{self.name}[/]' from file '[bold orange]{file}[/]'.")
+                self.message_panel.create_information_message(f"Successfully loaded table '[bold cyan]{self.name}[/]' from file '[bold red]{file}[/]'.")
             except Exception as e:
                 self.message_panel.create_error_message(f"Error processing '[bold blue]{file}[/]': {e}")
 
