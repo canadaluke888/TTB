@@ -28,6 +28,57 @@ class TableBuilder:
         self.table_data = {"columns": [], "rows": []}
         self.table_saved = False
 
+    def interpret_column_types(self):
+        """
+        Automatically interpret data types for columns based on the first row of data.
+        """
+        if not self.table_data["columns"] or not self.table_data["rows"]:
+            self.message_panel.create_error_message("No data available to interpret column types.")
+            return
+
+        # Default to the first row for type inference
+        first_row = self.table_data["rows"][0]
+        inferred_types = {}
+
+        for column_name in self.table_data["columns"]:
+            column_values = [row[column_name] for row in self.table_data["rows"] if column_name in row]
+            
+            # Infer types based on the first non-empty value
+            for value in column_values:
+                if value.isdigit():
+                    inferred_types[column_name] = "int"
+                    break
+                try:
+                    float(value)
+                    inferred_types[column_name] = "float"
+                    break
+                except ValueError:
+                    if value.lower() in ["true", "false"]:
+                        inferred_types[column_name] = "bool"
+                        break
+                    else:
+                        inferred_types[column_name] = "str"
+                        break
+            else:
+                inferred_types[column_name] = "str"  # Default type if no valid value is found
+
+        # Display inferred types to the user
+        self.console.print("[bold green]Inferred Column Types:[/]")
+        for column_name, column_type in inferred_types.items():
+            self.console.print(f"[bold cyan]{column_name}[/]: {column_type}")
+
+        # Ask the user to confirm or modify inferred types
+        confirm = self.console.input("[bold yellow]Accept inferred types? (y/n)[/]: ").strip().lower()
+        if confirm == "y":
+            # Apply inferred types to the table
+            for column in self.table_data["columns"]:
+                column["type"] = inferred_types[column["name"]]
+            self.message_panel.create_information_message("Column types updated based on inferred types.")
+        elif confirm == "n":
+            self.message_panel.create_information_message("You can manually change column types using 'change type'.")
+        else:
+            self.message_panel.create_error_message("Invalid input. No changes made to column types.")
+
     def save_table_to_pdf(self):
         """
         Save the current table data to a PDF file.
@@ -302,18 +353,17 @@ class TableBuilder:
             )
 
             
-    def load_csv(self, path: any = None) -> None:
+    def load_csv(self, path: str = None) -> None:
         """
-        Loads a CSV file and updates the table data for building a table.
+        Load a CSV file and update the table data with all columns defaulting to strings.
 
-        Prompts the user for the CSV file path and validates the input.
+        Args:
+            path (str): Path to the CSV file. If not provided, prompts the user.
         """
-        if not path:
-            csv_path = self.console.input("[bold yellow]Enter path to CSV file[/]: ")
-        else:
-            csv_path = path
+        # Prompt for CSV path if not provided
+        csv_path = path or self.console.input("[bold yellow]Enter path to CSV file[/]: ").strip()
 
-        # Check if the path is valid
+        # Validate the file path
         if not os.path.isfile(csv_path):
             self.message_panel.create_error_message("Invalid path or file does not exist.")
             return
@@ -321,73 +371,84 @@ class TableBuilder:
         try:
             with open(csv_path, 'r', encoding='utf-8') as csv_file:
                 reader = csv.reader(csv_file)
-                rows = list(reader)  # Convert reader to a list of rows
-                
+                rows = list(reader)  # Convert CSV reader to a list of rows
+
+                # Ensure the CSV is not empty
                 if not rows:
                     self.message_panel.create_error_message("CSV file is empty.")
                     return
 
-                # First row as columns
-                self.table_data["columns"] = rows[0]
-                # Remaining rows as data
+                # Use the first row as column names, defaulting to string type
+                self.table_data["columns"] = [{"name": col, "type": "str"} for col in rows[0]]
+
+                # Populate the rows with column-value dictionaries
                 self.table_data["rows"] = [
-                    {col: value for col, value in zip(self.table_data["columns"], row)}
+                    {col: value for col, value in zip([c["name"] for c in self.table_data["columns"]], row)}
                     for row in rows[1:]
                 ]
 
+                # Mark the table as unsaved and notify the user
                 self.table_saved = False
                 self.message_panel.create_information_message("CSV file loaded successfully.")
-                
+
                 # Automatically print the table if the setting is enabled
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
+
+        except UnicodeDecodeError:
+            self.message_panel.create_error_message("Failed to decode file. Ensure it is UTF-8 encoded.")
         except Exception as e:
             self.message_panel.create_error_message(f"Failed to load CSV file: {e}")
+
+
             
     def load_batch_csv(self):
         """
-        Load a batch of CSV files in a specified directory into the database.
+        Load a batch of CSV files in a specified directory into the database with all columns defaulting to strings.
         """
-        directory = self.console.input("[bold yellow]Enter the directory of CSV files[/]: ")
-        
-        # Get list of files in the directory
-        if not os.path.exists(directory):
-            self.message_panel.create_error_message("Directory does not exist.")
+        directory = self.console.input("[bold yellow]Enter the directory of CSV files[/]: ").strip()
+
+        # Validate the directory path
+        if not os.path.exists(directory) or not os.path.isdir(directory):
+            self.message_panel.create_error_message("Directory does not exist or is invalid.")
             return
-        
-        recursive_load = self.console.input("[bold yellow]Load CSV files from subdirectories? (y/n)[/]: ").lower()
+
+        recursive_load = self.console.input("[bold yellow]Load CSV files from subdirectories? (y/n)[/]: ").strip().lower()
         csv_files = []
 
+        # Collect CSV files based on user input
         if recursive_load == 'y':
-            # Recursively find all CSV files
             for root, dirs, files in os.walk(directory):
                 csv_files.extend([os.path.join(root, file) for file in files if file.endswith('.csv')])
         elif recursive_load == 'n':
-            # Only include CSV files in the specified directory
             csv_files = [os.path.join(directory, file) for file in os.listdir(directory) if file.endswith('.csv')]
         else:
             self.message_panel.create_error_message("Invalid input! Please enter 'y' or 'n'.")
             return
 
-        self.message_panel.create_information_message(f"Found [bold cyan]{len(csv_files)}[/] CSV files.")
-
+        # Notify the user about found CSV files
         if not csv_files:
-            self.message_panel.create_error_message("No CSV files found in specified directory.")
+            self.message_panel.create_error_message("No CSV files found in the specified directory.")
             return
+
+        self.message_panel.create_information_message(f"Found [bold cyan]{len(csv_files)}[/] CSV files.")
 
         # Process each CSV file
         for i, file in enumerate(csv_files):
             try:
                 self.load_csv(path=file)
-                self.name = f"Table{i+1}"
+
+                # Assign a unique name for each table
+                self.name = f"Table_{os.path.splitext(os.path.basename(file))[0]}_{i + 1}"
                 self.save_to_database()
-                self.name = None
-                self.message_panel.create_information_message(f"Loaded table [bold cyan]{i + 1}: {file}[/]")
+                self.message_panel.create_information_message(f"Successfully loaded table '[bold cyan]{self.name}[/]' from file '[bold orange]{file}[/]'.")
             except Exception as e:
-                self.message_panel.create_error_message(f"Error loading [bold orange]{file}: {str(e)}[/]")
+                self.message_panel.create_error_message(f"Error processing '[bold blue]{file}[/]': {e}")
 
         self.table_saved = True
-        self.console.print("[bold green]Batch CSV loading complete![/]")
+        self.message_panel.create_information_message("Batch CSV loading complete!")
+
+
 
     def get_num_columns(self) -> int:
         """
@@ -695,7 +756,7 @@ class TableBuilder:
         for column in self.table_data["columns"]:
             column_name = column["name"]
             column_type = column["type"]
-            table.add_column(f"{column_name} ({column_type})", style="cyan")
+            table.add_column(f"{column_name} ([bold red]{column_type}[/])", style="cyan")
 
         # Add rows
         for row in self.table_data["rows"]:
