@@ -128,7 +128,7 @@ class MessagePanel:
 - [bold cyan]save pdf[/]: Save the table to a PDF file.
 - [bold cyan]save json[/]: Save the table data to a JSON file.
 - [bold cyan]exit[/]: Go back to the main menu.
-- [bold cyan]help[/]: Prints this screen.
+- [bold cyan]print help[/]: Prints this screen.
                 """,
                 title="[bold red]Table Builder[/] - [bold white]Instructions[/]",
                 title_align="center",

@@ -245,7 +245,7 @@ class Database:
                 self.select_database()
 
             elif command == "current database":
-                self.message_panel.create_information_message(f"Current database: {self.current_database}")
+                self.message_panel.create_information_message(f"Current database: [bold cyan]{self.current_database}[/]")
 
             elif command == "close database":
                 self.close()

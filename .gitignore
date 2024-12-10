@@ -1,0 +1,4 @@
+.cpython
+__pycache__/
+databases/
+test_csv/
