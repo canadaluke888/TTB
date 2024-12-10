@@ -25,6 +25,7 @@
     "table_builder": [
         "print help",
         "add column",
+        "change_type",
         "add row",
         "edit cell",
         "remove column",
