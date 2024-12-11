@@ -109,6 +109,7 @@ class MessagePanel:
 
 - [bold cyan]add column[/]: Add a column to the table.
 - [bold cyan]change type[/]: Change the data type for a column.
+- [bold cyan]rename column[/]: Change the name for one of the column headings.
 - [bold cyan]add row[/]: Add a row to the table.
 - [bold cyan]remove column[/]: Removes a column from the table.
 - [bold cyan]remove row[/]: Removes a row from the table.

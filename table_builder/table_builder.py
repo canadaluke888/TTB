@@ -510,6 +510,47 @@ class TableBuilder:
         else:
             self.message_panel.create_information_message("[bold yellow]Column type change cancelled.[/]")
 
+    def edit_column_name(self) -> None:
+        """
+        Edits the name of an existing column in the table.
+        """
+        if not self.table_data["columns"]:
+            self.message_panel.create_error_message("No columns defined. Add columns before renaming.")
+            return
+
+        # Display available columns for selection
+        self.console.print("[bold green]Available Columns:[/]")
+        for idx, column in enumerate(self.table_data["columns"], start=1):
+            self.console.print(f"{idx}. {column['name']} (Type: {column['type']})")
+
+        try:
+            column_number = int(self.console.input("[bold yellow]Enter the number of the column to rename[/]: ")) - 1
+            if not (0 <= column_number < len(self.table_data["columns"])):
+                self.message_panel.create_error_message("Invalid column number.")
+                return
+            selected_column = self.table_data["columns"][column_number]
+        except ValueError:
+            self.message_panel.create_error_message("Invalid input. Please enter a number.")
+            return
+
+        # Prompt for the new column name
+        new_name = self.console.input(f"[bold yellow]Enter the new name for column '[bold cyan]{selected_column['name']}[/]': [/]").strip()
+
+        # Validate new name (e.g., avoid duplicates)
+        if any(column["name"] == new_name for column in self.table_data["columns"]):
+            self.message_panel.create_error_message("A column with this name already exists. Please choose a different name.")
+            return
+
+        # Apply the name change
+        old_name = selected_column["name"]
+        selected_column["name"] = new_name
+
+        # Update all row data to reflect the name change
+        for row in self.table_data["rows"]:
+            row[new_name] = row.pop(old_name, "")
+
+        self.table_saved = False
+        self.message_panel.create_information_message(f"Column '[bold cyan]{old_name}[/]' renamed to '[bold green]{new_name}[/]' successfully.")
 
 
     def add_row(self) -> None:
@@ -762,6 +803,9 @@ class TableBuilder:
                 self.change_column_type()
                 if self.settings.get_autoprint_table() == "on":
                     self.print_table()
+
+            elif builder_command == "rename column":
+                self.edit_column_name()
 
             elif builder_command == "add row":
                 self.add_row()
