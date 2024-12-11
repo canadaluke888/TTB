@@ -26,6 +26,7 @@
         "print help",
         "add column",
         "change_type",
+        "rename column",
         "add row",
         "edit cell",
         "remove column",
