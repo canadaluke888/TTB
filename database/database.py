@@ -4,14 +4,17 @@ from rich.console import Console
 from message_panel.message_panel import MessagePanel
 from autocomplete.autocomplete import Autocomplete
 from rich.panel import Panel
+from settings.settings import Settings
 
 class Database:
-    def __init__(self, console: Console):
+    def __init__(self, console: Console, settings: Settings):
         """
         Initialize the Database manager.
         :param console: Console instance for rich text output.
+        :param settings: Settings instance for getting user settings.
         """
         self.console = console
+        self.settings = settings
         self.message_panel = MessagePanel(self.console)
         self.autocomplete = Autocomplete(self.console)
         self.current_database = None
@@ -212,7 +215,7 @@ class Database:
             if 0 <= db_number < len(databases):
                 self.connect(databases[db_number])
             else:
-                self.message_panel.create_error_message("Invlalid database number.")
+                self.message_panel.create_error_message("Invalid database number.")
         except ValueError:
             self.message_panel.create_error_message("Invalid input. Please enter a valid number.")
 
@@ -220,7 +223,10 @@ class Database:
         """
         Interactive interface for managing databases.
         """
-        self.message_panel.print_database_instructions()
+
+        if self.settings.get_hide_instructions() == "off":
+            self.message_panel.print_database_instructions()
+            
         while True:
             command = self.console.input(
                 "[bold red]Database Manager[/] - [bold yellow]Enter a command[/]: "

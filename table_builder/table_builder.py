@@ -8,16 +8,17 @@ from reportlab.platypus import SimpleDocTemplate, Table as PDFTable, TableStyle
 from reportlab.lib import colors
 import json
 from rich.panel import Panel
+from settings.settings import Settings
+from rich.console import Console
 
 class TableBuilder:
-    def __init__(self, console, settings, database):
+    def __init__(self, console: Console, settings: Settings, database):
         """
         Initialize a new table.
 
-        Args:
-            console (Console): Pass console.
-            settings (Settings): Pass settings.
-            database (Database): Pass database.
+        :param console: Console instance for printing to screen.
+        :param settings: Settings instance for using user settings.
+        :param database: Database instance for updating the database.
         """
         self.console = console
         self.database = database
@@ -785,7 +786,9 @@ class TableBuilder:
         """
         Launches the table builder loop.
         """
-        self.message_panel.print_table_builder_instructions()
+
+        if self.settings.get_hide_instructions() == "off":
+            self.message_panel.print_table_builder_instructions()
 
         while True:
             builder_command = self.console.input("[bold red]Table Builder[/] - [bold yellow]Enter a command[/]: ").lower().strip()

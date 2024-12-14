@@ -9,7 +9,7 @@ console = Console()
 message_panel = MessagePanel(console)
 autocomplete = Autocomplete(console)
 settings = Settings(console)
-database = Database(console)
+database = Database(console, settings)
 
 
 def main():

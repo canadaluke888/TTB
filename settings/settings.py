@@ -2,10 +2,18 @@ from message_panel.message_panel import MessagePanel
 from rich.table import Table
 import json
 from autocomplete.autocomplete import Autocomplete
+from rich.console import Console
+
 
 class Settings:
     
-    def __init__(self, console):
+    def __init__(self, console: Console):
+        """
+        Initialize database.
+
+        :param console: The main console for the app that will allow us to print to the screen.
+        """
+        
         self.console = console
         self.autocomplete = Autocomplete(self.console)
         self.settings_file = "settings/settings.json"
@@ -13,16 +21,23 @@ class Settings:
         self.settings = self.load_settings()
         
     def launch_settings(self):
-        self.message_panel.print_settings_instructions()
+
+        if self.get_hide_instructions() == "off":
+            self.message_panel.print_settings_instructions()
         
         while True:
-            setting = self.console.input("[bold red]Settings[/] - [bold yellow]Enter a setting[/]: ")
+            setting = self.console.input("[bold red]Settings[/] - [bold yellow]Enter a setting[/]: ").lower().strip()
             
             if setting == "autoprint_table":
-                value = self.console.input("[bold yellow]Turn Autoprint on or off[/]: ").lower()
+                value = self.console.input("[bold yellow]Turn Autoprint on or off[/]: ").lower().strip()
                 self.set_autoprint_table(value)
                 self.save_settings()
-                
+
+            elif setting == "hide_instructions":
+                value = self.console.input("[bold yellow]Turn Hide Instructions on or off[/]: ").lower().strip()
+                self.set_hide_instructions(value)
+                self.save_settings()
+
             elif setting == "print settings":
                 self.print_settings()
                 
@@ -39,7 +54,8 @@ class Settings:
                 return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             # Default settings if file is missing or corrupted
-            return {"autoprint_table": False}
+            return {"autoprint_table": False,
+                    "hide_instructions": False}
         
     def save_settings(self):
         with open(self.settings_file, 'w') as f:
@@ -60,7 +76,8 @@ class Settings:
         
     def get_setting_description(self, setting: str) -> str:
         descriptions = {
-            "autoprint_table": "Automatically prints the table after a change has been made."
+            "autoprint_table": "Automatically prints the table after a change has been made.",
+            "hide_instructions": "Hide the instructions message when using the app."
         }
         return descriptions.get(setting, "No description available.")
     
@@ -72,9 +89,25 @@ class Settings:
         value = value.lower().strip()
         if value == "on":
             self.settings["autoprint_table"] = True
-            self.message_panel.create_information_message(f"autoprint_table [bold green]on[/]")
+            self.message_panel.create_information_message("autoprint_table [bold green]on[/]")
         elif value == "off":
             self.settings["autoprint_table"] = False
-            self.message_panel.create_information_message(f"autoprint_table [bold red]off[/]")
+            self.message_panel.create_information_message("autoprint_table [bold red]off[/]")
+        else:
+            self.message_panel.create_error_message("Enter 'on' or 'off'.")
+
+    def get_hide_instructions(self):
+        value = self.settings.get("hide_instructions", False)
+        return "on" if value else "off"
+    
+    def set_hide_instructions(self, value: str):
+        value = value.lower().strip()
+
+        if value == "on":
+            self.settings['hide_instructions'] = True
+            self.message_panel.create_information_message("hide_instructions [bold green]on[/]")
+        elif value == "off":
+            self.settings['hide_instructions'] = False
+            self.message_panel.create_information_message("hide_instructions [bold red]off[/]")
         else:
             self.message_panel.create_error_message("Enter 'on' or 'off'.")

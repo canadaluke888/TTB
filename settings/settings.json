@@ -1,3 +1,4 @@
 {
-    "autoprint_table": false
+    "autoprint_table": false,
+    "hide_instructions": false
 }

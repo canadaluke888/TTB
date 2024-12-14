@@ -8,6 +8,7 @@
     ],
     "settings": [
         "autoprint_table",
+        "hide_instructions",
         "print settings",
         "exit"
     ],
@@ -25,7 +26,7 @@
     "table_builder": [
         "print help",
         "add column",
-        "change_type",
+        "change type",
         "rename column",
         "add row",
         "edit cell",
