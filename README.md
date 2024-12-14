@@ -56,6 +56,7 @@ Easily view and edit tables in databases from the terminal.
 - **Saving the table data to a JSON file:** Enter the `save json` command. Specify if you want to use the name of the table as the name for the JSON file. The file will appear in the root directory for the application.
 - **Loading a table from the database:** Enter the `load table` command and then select from the list of available tables. Make sure that you have a database selected first.
 - **Saving a table to a database:** Enter the `save table` command. The table should be saved to the currently selected database.
+- **Deleting a table from the database:** Enter the `delete table` command. Select the number corresponding to the table you want to delete.
 - **Viewing the available tables in the database:** Enter the `list tables` command.
 - **Clearing the table:** Enter the `clear table` command.
 - **Renaming the table:** Enter the `rename` command. Enter the new name for the table.
