@@ -415,7 +415,7 @@ class TableBuilder:
     def get_num_rows(self) -> int:
         """
         Returns:
-            int: The total amound of rows in the table.
+            int: The total amount of rows in the table.
         """
         return len(self.table_data["rows"])
 

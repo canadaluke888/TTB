@@ -19,7 +19,7 @@ class MessagePanel:
             message (str): The message to display.
 
         Returns:
-            Panel: The redered panel with the message.
+            Panel: The rendered panel with the message.
         """
         self.console.print(
             Panel(
@@ -124,7 +124,7 @@ class MessagePanel:
 - [bold cyan]print table data[/]: Print the JSON data for the current table.
 - [bold cyan]load csv[/]: Loads a CSV file into a formatted table.
 - [bold cyan]load csv batch[/]: Load a bunch of CSV files automatically from a directory into the database.
-- [bold cyan]list tables[/]: List the avalable tables from the database.
+- [bold cyan]list tables[/]: List the available tables from the database.
 - [bold cyan]save csv[/]: Save the data from the table to a CSV file.
 - [bold cyan]save pdf[/]: Save the table to a PDF file.
 - [bold cyan]save json[/]: Save the table data to a JSON file.

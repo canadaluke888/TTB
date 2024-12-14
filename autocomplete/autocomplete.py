@@ -2,15 +2,15 @@ from difflib import get_close_matches
 import json
 from message_panel.message_panel import MessagePanel
 from functools import cache
+from rich.console import Console
 
 class Autocomplete:
     
-    def __init__(self, console):
+    def __init__(self, console: Console):
         """
         Initialize console and command lists.
 
-        Args:
-            console (Console): Main console.
+        :param console: Main console.
         """
         
         self.console = console
