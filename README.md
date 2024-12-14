@@ -64,4 +64,4 @@ Easily view and edit tables in databases from the terminal.
 
 ### Settings
 - **Turning on autoprint:** Once in the settings, you can enter the `autoprint_table` command. You will then be prompted if you want to turn autoprint on or off. Turning on autoprint_table will automatically print the table after a change has been made.
-- **Turning on Hide Instructions:** In the settings, you can enter the `hide_instructions` command. You will then be prompted if you want to turn Hide Instructions on or off. Turning on hide_instructions will stop printing the instructions to the screen while navigating different parts of the app.
+- **Turning on Hide Instructions:** In the settings, you can enter the `hide_instructions` command. You will then be prompted if you want to turn Hide Instructions on or off. Turning on hide_instructions will stop automatically printing the instructions to the screen while navigating different parts of the app.
