@@ -40,7 +40,7 @@ Easily view and edit tables in databases from the terminal.
 - **Searching the database:** Enter the `search` command and then enter a search query. It will return information on the location if a match is found.
 
 ### Table Builder
-- **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table. Remember that the first column added is going to be the heading row each row.
+- **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table.
 - **Adding a column:** Enter the `add column` command. Enter the name for the column. Specify the data type for the column.
 - **Changing the data type for a column:** Enter the `change type` command. Enter the number corresponding to the column that you want to change the data type for. Enter the number corresponding to the data type that you want to change the column to.
 - **Changing the name for a column:** Enter the `rename column` command. Enter the number corresponding to the column name that you want to change. Enter the new name for the column.
