@@ -42,7 +42,7 @@ Easily view and edit tables in databases from the terminal.
 ### Table Builder
 - **Building a new table:** In the main menu, enter the `table builder` command. Enter a name for the table. From here you can add data to the table.
 - **Adding a column:** Enter the `add column` command. Enter the name for the column. Specify the data type for the column.
-- **Changing the data type for a column:** Enter the `change type` command. Enter the number corresponding to the column that you want to change the data type for. Enter the number corresponding to the data type that you want to change the column to.
+- **Changing the data type for a column:** Enter the `change type` command. Enter the number corresponding to the column that you want to change the data type for. select the number corresponding to the new data type you want.
 - **Changing the name for a column:** Enter the `rename column` command. Enter the number corresponding to the column name that you want to change. Enter the new name for the column.
 - **Adding a row:** Enter the `add row` command and the program will walk through each heading allowing you to enter data for each cell. Be sure to enter the correct data type that you specified for the column.
 - **Removing a column:** Enter the `remove column` command. Enter the column name.
@@ -50,7 +50,7 @@ Easily view and edit tables in databases from the terminal.
 - **Editing a cell:** Enter the `edit cell` command. Enter the index for the cell that is displayed on the screen. For example, if you wanted to edit the second row of the second column, you would enter '2,2'. After entering the index for the cell, you can then enter the new information that you want in the cell.
 - **Printing the table:** Enter the `print table` command.
 - **Loading data from a CSV file:** Enter the `load csv` command. Enter the path to the CSV file.
-- **Loading more than one CSV file:** Enter the `load csv batch` command. Enter the path to the directory that contains the CSV files. Specify if you want to add the CSV files in the subdirectories.
+- **Loading more than one CSV file:** Enter the `load csv batch` command. Enter the path to the directory that contains the CSV files. Specify if you want to add the CSV files in the subdirectories. All tables loaded will be saved under the default name "Table".
 - **Saving data to a CSV file:** Enter the `save csv` command. You will be prompted on if you want to use the name of the table as the name of the CSV file. The CSV file will appear in the root directory of the app.
 - **Saving a table to a PDF file:** Enter the `save pdf` command. You will be prompted on if you want to use the table name as the file name. The PDF file will appear in the root directory of the application.
 - **Saving the table data to a JSON file:** Enter the `save json` command. Specify if you want to use the name of the table as the name for the JSON file. The file will appear in the root directory for the application.
@@ -61,7 +61,7 @@ Easily view and edit tables in databases from the terminal.
 - **Clearing the table:** Enter the `clear table` command.
 - **Renaming the table:** Enter the `rename` command. Enter the new name for the table.
 - **Viewing the JSON data for the table:** Enter the `print table data` command.
-- **Exiting the app:** You can you use the `exit` command to exit the application and navigate through the different parts of the app.
+- **Exiting the app:** You can you use the `exit` command to exit the application and navigate through the different parts of the app. You must be in main menu to close app.
 
 ### Settings
 - **Turning on autoprint:** Once in the settings, you can enter the `autoprint_table` command. You will then be prompted if you want to turn autoprint on or off. Turning on autoprint_table will automatically print the table after a change has been made.
