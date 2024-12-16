@@ -30,7 +30,7 @@ Easily view and edit tables in databases from the terminal.
 
 - **Starting the application:** For Linux and Max OS, `python3 main.py`. For Windows, `python main.py`.
 
-## Database
+### Database
 - **Creating a new database:** In the main menu, enter the `database` command. Enter the `create database` command and then name the new database. Your database will automatically be selected as the working database.
 - **Deleting a database:** Enter the `delete database` command and then select the database that you want to delete from the list.
 - **Selecting an existing database:** Enter the `select database` command and then choose from the list of available databases.
