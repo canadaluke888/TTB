@@ -1,13 +1,13 @@
 from rich.panel import Panel
 from functools import cache
+from rich.console import Console
 
 class MessagePanel:
-    def __init__(self, console):
+    def __init__(self, console: Console):
         """
         Initialize main console.
 
-        Args:
-            console (Console): rich console.
+        :param console: Rich Console for displaying system messages.
         """
         self.console = console
 
@@ -49,62 +49,41 @@ class MessagePanel:
             )
         )
 
+    @staticmethod
     @cache
-    def print_welcome_message(self) -> Panel:
+    def get_welcome_message() -> str:
         """
-        Print the welcome message upon login.
-        
-        Return: The rendered panel with the welcome message.
+        Load and cache welcome static message data.
         """
-        
-        self.console.print(
-            Panel(
-                """
+        return """
 [bold yellow]A terminal app where you can build and edit tables.[/]
 
 [bold cyan]SQLite database supported![/]
 
-[bold red]Type 'help' for instructions.[/]
-                """,
-                title="[bold red]Terminal Table Builder[/]",
-                subtitle="[bold white]Welcome![/]",
-                subtitle_align="center",
-                border_style="cyan",
-            )
-        )
+[bold red]Type 'help' for instructions.[/]        
+        """
 
+    @staticmethod
     @cache
-    def print_main_menu_instructions(self) -> Panel:
+    def get_main_menu_instructions() -> str:
         """
-        Print the commands for the main menu.
-        
-        Return: The rendered panel with the instructions message.
+        Load and cache static Main Menu instructions.
         """
-        self.console.print(
-            Panel(
-                """
+        return """
 [green]
-- table builder: Enter the table builder.
-- settings: Enter the settings.
-- exit: Exit the application.
+- [bold cyan]table builder[/]: Enter the table builder.
+- [bold cyan]settings[/]: Enter the settings.
+- [bold cyan]exit[/]: Exit the application.
 [/]
-                """,
-                title="[bold red]Main Menu[/] - [bold white]Instructions[/]",
-                title_align="center",
-                border_style="cyan",
-            )
-        )
-
-    @cache
-    def print_table_builder_instructions(self) -> Panel:
         """
-        Print the commands for the table builder portion of the app.
         
-        Return: The rendered panel with the instructions message.
+    @staticmethod
+    @cache
+    def get_table_builder_instructions() -> str:
         """
-        self.console.print(
-            Panel(
-                """
+        Load and cache static Table Builder instructions.
+        """
+        return """
 [bold blue]Welcome to the Table Builder![/]
 
 - [bold cyan]add column[/]: Add a column to the table.
@@ -130,23 +109,15 @@ class MessagePanel:
 - [bold cyan]save json[/]: Save the table data to a JSON file.
 - [bold cyan]exit[/]: Go back to the main menu.
 - [bold cyan]print help[/]: Prints this screen.
-                """,
-                title="[bold red]Table Builder[/] - [bold white]Instructions[/]",
-                title_align="center",
-                border_style="cyan",
-            )
-        )
-
-    @cache
-    def print_settings_instructions(self) -> Panel:
         """
-        Print the commands for the settings.
         
-        Return: The rendered panel with the instructions message.
+    @staticmethod
+    @cache
+    def get_settings_instructions() -> str:
         """
-        self.console.print(
-            Panel(
-                """
+        Load and cache static Settings instructions.
+        """
+        return """
 [bold yellow]Welcome to the Settings![/]
 
 [bold yellow]Instructions:[/]
@@ -155,23 +126,15 @@ class MessagePanel:
 - Use 'print settings' to show the current settings.
 [/green]
 [bold red]Tip:[/] Double-check your input for accuracy!
-                """,
-                title="[bold red]Settings[/] - [bold white]Instructions[/]",
-                title_align="center",
-                border_style="cyan",
-            )
-        )
+        """
 
+    @staticmethod
     @cache
-    def print_database_instructions(self) -> Panel:
+    def get_database_instructions() -> str:
         """
-        Print the commands for the database portion of the app.
-        
-        Return: The rendered panel with the instructions message.
+        Load and cache static Database Manager instructions.
         """
-        self.console.print(
-            Panel(
-                """
+        return """
 [bold yellow]Welcome to the Database Manager![/]
 
 [green]
@@ -186,7 +149,76 @@ class MessagePanel:
 [/green]
 
 [bold red]Tip:[/] Use [bold cyan]'select database'[/] to view and set a database. [bold cyan]'search'[/] to locate table data.
-                """,
+        """
+        
+                
+
+    def print_welcome_message(self) -> Panel:
+        """
+        Print the welcome message upon login.
+        
+        Return: The rendered panel with the welcome message.
+        """
+        
+        self.console.print(
+            Panel(self.get_welcome_message(),
+                title="[bold red]Terminal Table Builder[/]",
+                subtitle="[bold white]Welcome![/]",
+                subtitle_align="center",
+                border_style="cyan",
+            )
+        )
+
+    def print_main_menu_instructions(self) -> Panel:
+        """
+        Print the commands for the main menu.
+        
+        Return: The rendered panel with the instructions message.
+        """
+        self.console.print(
+            Panel(self.get_main_menu_instructions(),
+                title="[bold red]Main Menu[/] - [bold white]Instructions[/]",
+                title_align="center",
+                border_style="cyan",
+            )
+        )
+
+    def print_table_builder_instructions(self) -> Panel:
+        """
+        Print the commands for the table builder portion of the app.
+        
+        Return: The rendered panel with the instructions message.
+        """
+        self.console.print(
+            Panel(self.get_table_builder_instructions(),
+                title="[bold red]Table Builder[/] - [bold white]Instructions[/]",
+                title_align="center",
+                border_style="cyan",
+            )
+        )
+
+    def print_settings_instructions(self) -> Panel:
+        """
+        Print the commands for the settings.
+        
+        Return: The rendered panel with the instructions message.
+        """
+        self.console.print(
+            Panel(self.get_settings_instructions(),
+                title="[bold red]Settings[/] - [bold white]Instructions[/]",
+                title_align="center",
+                border_style="cyan",
+            )
+        )
+
+    def print_database_instructions(self) -> Panel:
+        """
+        Print the commands for the database portion of the app.
+        
+        Return: The rendered panel with the instructions message.
+        """
+        self.console.print(
+            Panel(self.get_database_instructions(),
                 title="[bold red]Database Manager[/] - [bold white]Instructions[/]",
                 title_align="center",
                 border_style="cyan",
